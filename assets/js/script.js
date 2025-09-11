@@ -61,15 +61,27 @@ function saveToStorage() {
 }
 
 function applyStoredSettings() {
-  document.getElementById('qrSize').value = currentSettings.size;
-  document.getElementById('errorCorrection').value = currentSettings.errorCorrection;
-  document.getElementById('exportMargin').value = currentSettings.exportMargin;
-  document.getElementById('darkColor').value = currentSettings.darkColor;
-  document.getElementById('lightColor').value = currentSettings.lightColor;
-  document.getElementById('darkColorText').value = currentSettings.darkColor;
-  document.getElementById('lightColorText').value = currentSettings.lightColor;
-  document.getElementById('logoSize').value = currentSettings.logoSize;
-  document.querySelector('.range-value').textContent = currentSettings.logoSize + '%';
+  const elements = {
+    qrSize: document.getElementById('qrSize'),
+    errorCorrection: document.getElementById('errorCorrection'),
+    exportMargin: document.getElementById('exportMargin'),
+    darkColor: document.getElementById('darkColor'),
+    lightColor: document.getElementById('lightColor'),
+    darkColorText: document.getElementById('darkColorText'),
+    lightColorText: document.getElementById('lightColorText'),
+    logoSize: document.getElementById('logoSize'),
+    rangeValue: document.querySelector('.range-value')
+  };
+
+  if (elements.qrSize) elements.qrSize.value = currentSettings.size;
+  if (elements.errorCorrection) elements.errorCorrection.value = currentSettings.errorCorrection;
+  if (elements.exportMargin) elements.exportMargin.value = currentSettings.exportMargin;
+  if (elements.darkColor) elements.darkColor.value = currentSettings.darkColor;
+  if (elements.lightColor) elements.lightColor.value = currentSettings.lightColor;
+  if (elements.darkColorText) elements.darkColorText.value = currentSettings.darkColor;
+  if (elements.lightColorText) elements.lightColorText.value = currentSettings.lightColor;
+  if (elements.logoSize) elements.logoSize.value = currentSettings.logoSize;
+  if (elements.rangeValue) elements.rangeValue.textContent = currentSettings.logoSize + '%';
 }
 
 // Event Listeners Setup
@@ -80,39 +92,63 @@ function setupEventListeners() {
   });
 
   // Generate Controls
-  document.getElementById('btnGenerate').addEventListener('click', handleGenerate);
-  document.getElementById('btnBatch').addEventListener('click', handleBatchGenerate);
+  const btnGenerate = document.getElementById('btnGenerate');
+  const btnBatch = document.getElementById('btnBatch');
+  if (btnGenerate) btnGenerate.addEventListener('click', handleGenerate);
+  if (btnBatch) btnBatch.addEventListener('click', handleBatchGenerate);
   
   // Input Actions
-  document.getElementById('pasteBtn').addEventListener('click', handlePaste);
-  document.getElementById('clearTextBtn').addEventListener('click', () => {
-    document.getElementById('textInput').value = '';
-    updatePreview();
-  });
+  const pasteBtn = document.getElementById('pasteBtn');
+  const clearTextBtn = document.getElementById('clearTextBtn');
+  if (pasteBtn) pasteBtn.addEventListener('click', handlePaste);
+  if (clearTextBtn) {
+    clearTextBtn.addEventListener('click', () => {
+      document.getElementById('textInput').value = '';
+      updatePreview();
+    });
+  }
 
   // Settings Controls
-  document.getElementById('qrSize').addEventListener('change', updateSettings);
-  document.getElementById('errorCorrection').addEventListener('change', updateSettings);
-  document.getElementById('exportMargin').addEventListener('change', updateSettings);
-  document.getElementById('darkColor').addEventListener('change', updateColorSettings);
-  document.getElementById('lightColor').addEventListener('change', updateColorSettings);
-  document.getElementById('darkColorText').addEventListener('input', updateColorFromText);
-  document.getElementById('lightColorText').addEventListener('input', updateColorFromText);
+  const settingElements = [
+    { id: 'qrSize', handler: updateSettings },
+    { id: 'errorCorrection', handler: updateSettings },
+    { id: 'exportMargin', handler: updateSettings },
+    { id: 'darkColor', handler: updateColorSettings },
+    { id: 'lightColor', handler: updateColorSettings },
+    { id: 'darkColorText', handler: updateColorFromText },
+    { id: 'lightColorText', handler: updateColorFromText }
+  ];
+
+  settingElements.forEach(({ id, handler }) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const eventType = element.type === 'color' ? 'change' : 'input';
+      element.addEventListener(eventType, handler);
+    }
+  });
 
   // Logo Upload
-  document.getElementById('logoUploadBtn').addEventListener('click', () => {
-    document.getElementById('logoUpload').click();
-  });
-  document.getElementById('logoUpload').addEventListener('change', handleLogoUpload);
-  document.getElementById('removeLogo').addEventListener('click', removeLogo);
-  document.getElementById('logoSize').addEventListener('input', updateLogoSize);
+  const logoUploadBtn = document.getElementById('logoUploadBtn');
+  const logoUpload = document.getElementById('logoUpload');
+  const removeLogo = document.getElementById('removeLogo');
+  const logoSize = document.getElementById('logoSize');
+
+  if (logoUploadBtn && logoUpload) {
+    logoUploadBtn.addEventListener('click', () => logoUpload.click());
+    logoUpload.addEventListener('change', handleLogoUpload);
+  }
+  if (removeLogo) removeLogo.addEventListener('click', removeLogoHandler);
+  if (logoSize) logoSize.addEventListener('input', updateLogoSize);
 
   // Preview Controls
-  document.getElementById('previewRefresh').addEventListener('click', updatePreview);
-  document.getElementById('textInput').addEventListener('input', debounce(updatePreview, 300));
+  const previewRefresh = document.getElementById('previewRefresh');
+  const textInput = document.getElementById('textInput');
+  if (previewRefresh) previewRefresh.addEventListener('click', updatePreview);
+  if (textInput) textInput.addEventListener('input', debounce(updatePreview, 300));
 
   // Advanced Options Toggle
-  document.getElementById('collapseOptions').addEventListener('click', toggleAdvancedOptions);
+  const collapseOptions = document.getElementById('collapseOptions');
+  if (collapseOptions) collapseOptions.addEventListener('click', toggleAdvancedOptions);
 
   // Template Cards
   document.querySelectorAll('.template-card').forEach(card => {
@@ -125,9 +161,13 @@ function setupEventListeners() {
   });
 
   // Gallery Controls
-  document.getElementById('btnDownloadAll').addEventListener('click', downloadAllQRCodes);
-  document.getElementById('btnClearAll').addEventListener('click', clearAllQRCodes);
-  document.getElementById('searchInput').addEventListener('input', debounce(filterGallery, 300));
+  const btnDownloadAll = document.getElementById('btnDownloadAll');
+  const btnClearAll = document.getElementById('btnClearAll');
+  const searchInput = document.getElementById('searchInput');
+
+  if (btnDownloadAll) btnDownloadAll.addEventListener('click', downloadAllQRCodes);
+  if (btnClearAll) btnClearAll.addEventListener('click', clearAllQRCodes);
+  if (searchInput) searchInput.addEventListener('input', debounce(filterGallery, 300));
   
   // Gallery Filters
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -139,11 +179,15 @@ function setupEventListeners() {
     preset.addEventListener('click', () => applyColorPreset(preset));
   });
   
-  document.getElementById('exportSettings').addEventListener('click', exportSettings);
-  document.getElementById('importSettings').addEventListener('click', () => {
-    document.getElementById('importFile').click();
-  });
-  document.getElementById('importFile').addEventListener('change', importSettings);
+  const exportSettings = document.getElementById('exportSettings');
+  const importSettings = document.getElementById('importSettings');
+  const importFile = document.getElementById('importFile');
+
+  if (exportSettings) exportSettings.addEventListener('click', exportSettingsHandler);
+  if (importSettings && importFile) {
+    importSettings.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', importSettingsHandler);
+  }
 }
 
 function setupKeyboardShortcuts() {
@@ -175,6 +219,69 @@ function setupKeyboardShortcuts() {
   });
 }
 
+// Utility Functions
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+function sanitizeFilename(text) {
+  return text.replace(/[^\w\s-]/gi, '').replace(/\s+/g, '_').substring(0, 50);
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+
+  const toastMessage = toast.querySelector('.toast-message');
+  const toastIcon = toast.querySelector('.toast-icon');
+
+  if (toastMessage) toastMessage.textContent = message;
+  
+  // Update icon based on type
+  if (toastIcon) {
+    const icons = {
+      success: '<circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/>',
+      error: '<circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+      warning: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/>'
+    };
+    toastIcon.innerHTML = icons[type] || icons.success;
+  }
+
+  toast.className = `toast show ${type}`;
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+function showLoading(text = 'Loading...') {
+  const overlay = document.getElementById('loadingOverlay');
+  const loadingText = overlay?.querySelector('.loading-text');
+  
+  if (overlay) {
+    overlay.classList.add('show');
+    if (loadingText) loadingText.textContent = text;
+  }
+}
+
+function hideLoading() {
+  const overlay = document.getElementById('loadingOverlay');
+  if (overlay) overlay.classList.remove('show');
+}
+
+function updateLoadingText(text) {
+  const loadingText = document.querySelector('.loading-text');
+  if (loadingText) loadingText.textContent = text;
+}
+
 // Tab Management
 function switchTab(tabName) {
   // Update tab buttons
@@ -195,38 +302,49 @@ function switchTab(tabName) {
 
 // Settings Management
 function updateSettings() {
-  currentSettings.size = parseInt(document.getElementById('qrSize').value);
-  currentSettings.errorCorrection = document.getElementById('errorCorrection').value;
-  currentSettings.exportMargin = parseInt(document.getElementById('exportMargin').value);
+  const qrSizeEl = document.getElementById('qrSize');
+  const errorCorrectionEl = document.getElementById('errorCorrection');
+  const exportMarginEl = document.getElementById('exportMargin');
+
+  if (qrSizeEl) currentSettings.size = parseInt(qrSizeEl.value);
+  if (errorCorrectionEl) currentSettings.errorCorrection = errorCorrectionEl.value;
+  if (exportMarginEl) currentSettings.exportMargin = parseInt(exportMarginEl.value);
   
   updatePreview();
   saveToStorage();
 }
 
 function updateColorSettings() {
-  currentSettings.darkColor = document.getElementById('darkColor').value;
-  currentSettings.lightColor = document.getElementById('lightColor').value;
+  const darkColorEl = document.getElementById('darkColor');
+  const lightColorEl = document.getElementById('lightColor');
+  const darkColorTextEl = document.getElementById('darkColorText');
+  const lightColorTextEl = document.getElementById('lightColorText');
+
+  if (darkColorEl) currentSettings.darkColor = darkColorEl.value;
+  if (lightColorEl) currentSettings.lightColor = lightColorEl.value;
   
   // Sync with text inputs
-  document.getElementById('darkColorText').value = currentSettings.darkColor;
-  document.getElementById('lightColorText').value = currentSettings.lightColor;
+  if (darkColorTextEl) darkColorTextEl.value = currentSettings.darkColor;
+  if (lightColorTextEl) lightColorTextEl.value = currentSettings.lightColor;
   
   updatePreview();
   saveToStorage();
 }
 
 function updateColorFromText() {
-  const darkText = document.getElementById('darkColorText').value;
-  const lightText = document.getElementById('lightColorText').value;
+  const darkTextEl = document.getElementById('darkColorText');
+  const lightTextEl = document.getElementById('lightColorText');
   
-  if (isValidColor(darkText)) {
-    currentSettings.darkColor = darkText;
-    document.getElementById('darkColor').value = darkText;
+  if (darkTextEl && isValidColor(darkTextEl.value)) {
+    currentSettings.darkColor = darkTextEl.value;
+    const darkColorEl = document.getElementById('darkColor');
+    if (darkColorEl) darkColorEl.value = darkTextEl.value;
   }
   
-  if (isValidColor(lightText)) {
-    currentSettings.lightColor = lightText;
-    document.getElementById('lightColor').value = lightText;
+  if (lightTextEl && isValidColor(lightTextEl.value)) {
+    currentSettings.lightColor = lightTextEl.value;
+    const lightColorEl = document.getElementById('lightColor');
+    if (lightColorEl) lightColorEl.value = lightTextEl.value;
   }
   
   updatePreview();
@@ -240,18 +358,40 @@ function isValidColor(color) {
 }
 
 function updateLogoSize() {
-  currentSettings.logoSize = parseInt(document.getElementById('logoSize').value);
-  document.querySelector('.range-value').textContent = currentSettings.logoSize + '%';
-  updatePreview();
-  saveToStorage();
+  const logoSizeEl = document.getElementById('logoSize');
+  const rangeValueEl = document.querySelector('.range-value');
+
+  if (logoSizeEl) {
+    currentSettings.logoSize = parseInt(logoSizeEl.value);
+    if (rangeValueEl) rangeValueEl.textContent = currentSettings.logoSize + '%';
+    updatePreview();
+    saveToStorage();
+  }
 }
 
 function toggleAdvancedOptions() {
   const content = document.getElementById('optionsContent');
   const btn = document.getElementById('collapseOptions');
   
-  content.classList.toggle('collapsed');
-  btn.classList.toggle('collapsed');
+  if (content && btn) {
+    content.classList.toggle('collapsed');
+    btn.classList.toggle('collapsed');
+  }
+}
+
+// Input Handlers
+async function handlePaste() {
+  try {
+    const text = await navigator.clipboard.readText();
+    const textInput = document.getElementById('textInput');
+    if (textInput) {
+      textInput.value = text;
+      updatePreview();
+      showToast('Text pasted successfully', 'success');
+    }
+  } catch (err) {
+    showToast('Failed to paste text', 'error');
+  }
 }
 
 // Logo Management
@@ -279,7 +419,8 @@ function handleLogoUpload(e) {
     // Auto-adjust error correction for logo
     if (currentSettings.errorCorrection === 'L') {
       currentSettings.errorCorrection = 'H';
-      document.getElementById('errorCorrection').value = 'H';
+      const errorCorrectionEl = document.getElementById('errorCorrection');
+      if (errorCorrectionEl) errorCorrectionEl.value = 'H';
       showToast('Error correction changed to High for logo compatibility', 'warning');
     }
   };
@@ -291,23 +432,31 @@ function showLogoPreview(dataUrl) {
   const img = document.getElementById('logoImage');
   const options = document.getElementById('logoOptions');
   
-  img.src = dataUrl;
-  preview.style.display = 'block';
-  options.style.display = 'block';
+  if (img) img.src = dataUrl;
+  if (preview) preview.style.display = 'block';
+  if (options) options.style.display = 'block';
 }
 
-function removeLogo() {
+function removeLogoHandler() {
   currentSettings.logoFile = null;
-  document.getElementById('logoPreview').style.display = 'none';
-  document.getElementById('logoOptions').style.display = 'none';
-  document.getElementById('logoUpload').value = '';
+  const preview = document.getElementById('logoPreview');
+  const options = document.getElementById('logoOptions');
+  const logoUpload = document.getElementById('logoUpload');
+  
+  if (preview) preview.style.display = 'none';
+  if (options) options.style.display = 'none';
+  if (logoUpload) logoUpload.value = '';
+  
   updatePreview();
   saveToStorage();
 }
 
 // QR Code Generation
 async function handleGenerate() {
-  const text = document.getElementById('textInput').value.trim();
+  const textInput = document.getElementById('textInput');
+  if (!textInput) return;
+
+  const text = textInput.value.trim();
   if (!text) {
     showToast('Please enter text to generate QR code', 'error');
     return;
@@ -335,7 +484,10 @@ async function handleGenerate() {
 }
 
 async function handleBatchGenerate() {
-  const text = document.getElementById('textInput').value.trim();
+  const textInput = document.getElementById('textInput');
+  if (!textInput) return;
+
+  const text = textInput.value.trim();
   if (!text) {
     showToast('Please enter text for batch generation', 'error');
     return;
@@ -504,11 +656,14 @@ function detectQRType(text) {
 
 // Preview Management
 function updatePreview() {
-  const text = document.getElementById('textInput').value.trim();
+  const textInput = document.getElementById('textInput');
   const charCount = document.getElementById('charCount');
   const sizeInfo = document.getElementById('sizeInfo');
   const preview = document.getElementById('qrPreview');
   
+  if (!textInput || !charCount || !sizeInfo || !preview) return;
+
+  const text = textInput.value.trim();
   charCount.textContent = text.length;
   sizeInfo.textContent = `${currentSettings.size}×${currentSettings.size}`;
   
@@ -561,9 +716,11 @@ function updatePreview() {
 function showTemplateForm(templateType) {
   hideAllTemplateForms();
   const form = document.getElementById(`${templateType}-form`);
-  if (form) {
+  const formsContainer = document.querySelector('.template-forms');
+  
+  if (form && formsContainer) {
     form.style.display = 'block';
-    document.querySelector('.template-forms').style.display = 'block';
+    formsContainer.style.display = 'block';
     form.scrollIntoView({ behavior: 'smooth' });
   }
 }
@@ -576,8 +733,10 @@ function hideTemplateForm(templateType) {
   
   // Hide container if no forms are visible
   const visibleForms = document.querySelectorAll('.template-form[style*="block"]');
-  if (visibleForms.length === 0) {
-    document.querySelector('.template-forms').style.display = 'none';
+  const formsContainer = document.querySelector('.template-forms');
+  
+  if (visibleForms.length === 0 && formsContainer) {
+    formsContainer.style.display = 'none';
   }
 }
 
@@ -585,7 +744,9 @@ function hideAllTemplateForms() {
   document.querySelectorAll('.template-form').forEach(form => {
     form.style.display = 'none';
   });
-  document.querySelector('.template-forms').style.display = 'none';
+  
+  const formsContainer = document.querySelector('.template-forms');
+  if (formsContainer) formsContainer.style.display = 'none';
 }
 
 async function generateFromTemplate(templateType) {
@@ -621,9 +782,12 @@ async function generateFromTemplate(templateType) {
     }
     
     // Set the text and generate
-    document.getElementById('textInput').value = templateText;
-    hideAllTemplateForms();
-    await handleGenerate();
+    const textInput = document.getElementById('textInput');
+    if (textInput) {
+      textInput.value = templateText;
+      hideAllTemplateForms();
+      await handleGenerate();
+    }
     
   } catch (error) {
     console.error('Template generation error:', error);
@@ -632,10 +796,17 @@ async function generateFromTemplate(templateType) {
 }
 
 function generateWiFiQR() {
-  const ssid = document.getElementById('wifiSSID').value.trim();
-  const password = document.getElementById('wifiPassword').value;
-  const security = document.getElementById('wifiSecurity').value;
-  const hidden = document.getElementById('wifiHidden').checked;
+  const ssidEl = document.getElementById('wifiSSID');
+  const passwordEl = document.getElementById('wifiPassword');
+  const securityEl = document.getElementById('wifiSecurity');
+  const hiddenEl = document.getElementById('wifiHidden');
+
+  if (!ssidEl) return '';
+  
+  const ssid = ssidEl.value.trim();
+  const password = passwordEl ? passwordEl.value : '';
+  const security = securityEl ? securityEl.value : 'WPA';
+  const hidden = hiddenEl ? hiddenEl.checked : false;
   
   if (!ssid) return '';
   
@@ -652,14 +823,23 @@ function generateWiFiQR() {
 }
 
 function generateVCardQR() {
-  const name = document.getElementById('vcardName').value.trim();
-  const phone = document.getElementById('vcardPhone').value.trim();
-  const email = document.getElementById('vcardEmail').value.trim();
-  const company = document.getElementById('vcardCompany').value.trim();
-  const address = document.getElementById('vcardAddress').value.trim();
-  const website = document.getElementById('vcardWebsite').value.trim();
-  
+  const elements = {
+    name: document.getElementById('vcardName'),
+    phone: document.getElementById('vcardPhone'),
+    email: document.getElementById('vcardEmail'),
+    company: document.getElementById('vcardCompany'),
+    address: document.getElementById('vcardAddress'),
+    website: document.getElementById('vcardWebsite')
+  };
+
+  const name = elements.name ? elements.name.value.trim() : '';
   if (!name) return '';
+
+  const phone = elements.phone ? elements.phone.value.trim() : '';
+  const email = elements.email ? elements.email.value.trim() : '';
+  const company = elements.company ? elements.company.value.trim() : '';
+  const address = elements.address ? elements.address.value.trim() : '';
+  const website = elements.website ? elements.website.value.trim() : '';
   
   let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
   vcard += `FN:${name}\n`;
@@ -674,9 +854,15 @@ function generateVCardQR() {
 }
 
 function generateEmailQR() {
-  const email = document.getElementById('emailTo').value.trim();
-  const subject = document.getElementById('emailSubject').value.trim();
-  const body = document.getElementById('emailBody').value.trim();
+  const emailEl = document.getElementById('emailTo');
+  const subjectEl = document.getElementById('emailSubject');
+  const bodyEl = document.getElementById('emailBody');
+
+  if (!emailEl) return '';
+  
+  const email = emailEl.value.trim();
+  const subject = subjectEl ? subjectEl.value.trim() : '';
+  const body = bodyEl ? bodyEl.value.trim() : '';
   
   if (!email) return '';
   
@@ -693,8 +879,13 @@ function generateEmailQR() {
 }
 
 function generateSMSQR() {
-  const number = document.getElementById('smsNumber').value.trim();
-  const message = document.getElementById('smsMessage').value.trim();
+  const numberEl = document.getElementById('smsNumber');
+  const messageEl = document.getElementById('smsMessage');
+
+  if (!numberEl) return '';
+  
+  const number = numberEl.value.trim();
+  const message = messageEl ? messageEl.value.trim() : '';
   
   if (!number) return '';
   
@@ -707,8 +898,13 @@ function generateSMSQR() {
 }
 
 function generateSocialQR() {
-  const platform = document.getElementById('socialPlatform').value;
-  const username = document.getElementById('socialUsername').value.trim().replace('@', '');
+  const platformEl = document.getElementById('socialPlatform');
+  const usernameEl = document.getElementById('socialUsername');
+
+  if (!platformEl || !usernameEl) return '';
+  
+  const platform = platformEl.value;
+  const username = usernameEl.value.trim().replace('@', '');
   
   if (!username) return '';
   
@@ -725,9 +921,15 @@ function generateSocialQR() {
 }
 
 function generateLocationQR() {
-  const lat = document.getElementById('locationLat').value.trim();
-  const lng = document.getElementById('locationLng').value.trim();
-  const label = document.getElementById('locationLabel').value.trim();
+  const latEl = document.getElementById('locationLat');
+  const lngEl = document.getElementById('locationLng');
+  const labelEl = document.getElementById('locationLabel');
+
+  if (!latEl || !lngEl) return '';
+  
+  const lat = latEl.value.trim();
+  const lng = lngEl.value.trim();
+  const label = labelEl ? labelEl.value.trim() : '';
   
   if (!lat || !lng) return '';
   
@@ -746,20 +948,21 @@ function updateGalleryDisplay() {
   const galleryCount = document.getElementById('galleryCount');
   
   if (qrHistory.length === 0) {
-    emptyState.style.display = 'block';
-    galleryContent.style.display = 'none';
+    if (emptyState) emptyState.style.display = 'block';
+    if (galleryContent) galleryContent.style.display = 'none';
   } else {
-    emptyState.style.display = 'none';
-    galleryContent.style.display = 'block';
-    galleryCount.textContent = qrHistory.length;
+    if (emptyState) emptyState.style.display = 'none';
+    if (galleryContent) galleryContent.style.display = 'block';
+    if (galleryCount) galleryCount.textContent = qrHistory.length;
     renderGalleryItems();
   }
 }
 
 function renderGalleryItems(filteredItems = null) {
   const grid = document.getElementById('galleryGrid');
+  if (!grid) return;
+
   const items = filteredItems || qrHistory;
-  
   grid.innerHTML = '';
   
   items.forEach((qr, index) => {
@@ -773,16 +976,6 @@ function createGalleryCard(qrData, index) {
   card.className = 'gallery-card';
   card.dataset.type = qrData.type;
   card.dataset.text = qrData.text.toLowerCase();
-  
-  const typeIcons = {
-    url: '🔗',
-    wifi: '📶',
-    vcard: '👤',
-    email: '📧',
-    sms: '💬',
-    location: '📍',
-    text: '📄'
-  };
   
   card.innerHTML = `
     <div class="gallery-card-image">
@@ -820,14 +1013,19 @@ function createGalleryCard(qrData, index) {
 }
 
 function filterGallery() {
-  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-  const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+  const searchInput = document.getElementById('searchInput');
+  const activeFilter = document.querySelector('.filter-btn.active');
+  
+  if (!searchInput || !activeFilter) return;
+
+  const searchTerm = searchInput.value.toLowerCase();
+  const filter = activeFilter.dataset.filter;
   
   let filtered = qrHistory;
   
   // Apply type filter
-  if (activeFilter !== 'all') {
-    filtered = filtered.filter(qr => qr.type === activeFilter);
+  if (filter !== 'all') {
+    filtered = filtered.filter(qr => qr.type === filter);
   }
   
   // Apply search filter
@@ -846,14 +1044,267 @@ function setGalleryFilter(filter) {
 }
 
 // QR Actions
-async function downloadQR(qrData, format = 'png') {
+async function downloadQR(qrData) {
   try {
     showLoading('Preparing download...');
     
     const paddedDataUrl = await addMarginToQR(qrData.dataUrl, currentSettings.exportMargin);
-    const filename = `qr_${sanitizeFilename(qrData.text)}_${Date.now()}`;
+    const filename = `qr_${sanitizeFilename(qrData.text)}_${Date.now()}.png`;
     
-    switch (format) {
-      case 'png':
-        downloadDataUrl(paddedDataUrl, `${filename}.png`);
-        break
+    downloadDataUrl(paddedDataUrl, filename);
+    showToast('QR code downloaded successfully!', 'success');
+    
+  } catch (error) {
+    console.error('Download error:', error);
+    showToast('Error downloading QR code', 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+function duplicateQR(qrData) {
+  const textInput = document.getElementById('textInput');
+  if (textInput) {
+    textInput.value = qrData.text;
+    updatePreview();
+    switchTab('generate');
+    showToast('QR code content copied to generator', 'success');
+  }
+}
+
+function deleteQR(index) {
+  if (confirm('Are you sure you want to delete this QR code?')) {
+    qrHistory.splice(index, 1);
+    saveToStorage();
+    updateGalleryDisplay();
+    updateUI();
+    showToast('QR code deleted successfully', 'success');
+  }
+}
+
+async function downloadAllQRCodes() {
+  if (qrHistory.length === 0) {
+    showToast('No QR codes to download', 'warning');
+    return;
+  }
+
+  if (typeof JSZip === 'undefined') {
+    showToast('JSZip library not loaded', 'error');
+    return;
+  }
+
+  showLoading(`Creating ZIP with ${qrHistory.length} QR codes...`);
+
+  try {
+    const zip = new JSZip();
+    const folder = zip.folder('qr-codes');
+
+    for (let i = 0; i < qrHistory.length; i++) {
+      const qr = qrHistory[i];
+      const paddedDataUrl = await addMarginToQR(qr.dataUrl, currentSettings.exportMargin);
+      const blob = dataUrlToBlob(paddedDataUrl);
+      const filename = `${String(i + 1).padStart(3, '0')}-${sanitizeFilename(qr.text)}.png`;
+      folder.file(filename, blob);
+      
+      updateLoadingText(`Processing QR codes... (${i + 1}/${qrHistory.length})`);
+    }
+
+    updateLoadingText('Creating ZIP file...');
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(zipBlob);
+    a.download = `qr-codes-${new Date().toISOString().slice(0, 10)}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    showToast(`Downloaded ${qrHistory.length} QR codes successfully!`, 'success');
+
+  } catch (error) {
+    console.error('Zip download error:', error);
+    showToast('Error creating ZIP file', 'error');
+  } finally {
+    hideLoading();
+  }
+}
+
+function clearAllQRCodes() {
+  if (qrHistory.length === 0) {
+    showToast('No QR codes to clear', 'warning');
+    return;
+  }
+
+  if (confirm(`Are you sure you want to delete all ${qrHistory.length} QR codes? This cannot be undone.`)) {
+    qrHistory.length = 0;
+    saveToStorage();
+    updateGalleryDisplay();
+    updateUI();
+    showToast('All QR codes cleared successfully', 'success');
+  }
+}
+
+// Utility Functions for Downloads
+async function addMarginToQR(dataUrl, marginPx) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      const newWidth = img.width + (marginPx * 2);
+      const newHeight = img.height + (marginPx * 2);
+      
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      
+      // Fill with white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, newWidth, newHeight);
+      
+      // Draw original image centered
+      ctx.drawImage(img, marginPx, marginPx);
+      
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.src = dataUrl;
+  });
+}
+
+function dataUrlToBlob(dataUrl) {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+function downloadDataUrl(dataUrl, filename) {
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// Settings Functions
+function applyColorPreset(presetElement) {
+  const darkColor = presetElement.dataset.dark;
+  const lightColor = presetElement.dataset.light;
+  
+  if (darkColor && lightColor) {
+    currentSettings.darkColor = darkColor;
+    currentSettings.lightColor = lightColor;
+    
+    const darkColorEl = document.getElementById('darkColor');
+    const lightColorEl = document.getElementById('lightColor');
+    const darkColorTextEl = document.getElementById('darkColorText');
+    const lightColorTextEl = document.getElementById('lightColorText');
+    
+    if (darkColorEl) darkColorEl.value = darkColor;
+    if (lightColorEl) lightColorEl.value = lightColor;
+    if (darkColorTextEl) darkColorTextEl.value = darkColor;
+    if (lightColorTextEl) lightColorTextEl.value = lightColor;
+    
+    updatePreview();
+    saveToStorage();
+    showToast('Color preset applied successfully', 'success');
+  }
+}
+
+function exportSettingsHandler() {
+  const settingsData = {
+    settings: currentSettings,
+    history: qrHistory,
+    exportDate: new Date().toISOString()
+  };
+  
+  const dataStr = JSON.stringify(settingsData, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(dataBlob);
+  a.download = `qr-studio-settings-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  
+  showToast('Settings exported successfully', 'success');
+}
+
+function importSettingsHandler(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  if (file.type !== 'application/json') {
+    showToast('Please select a valid JSON file', 'error');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      
+      if (data.settings) {
+        currentSettings = { ...currentSettings, ...data.settings };
+        applyStoredSettings();
+      }
+      
+      if (data.history && Array.isArray(data.history)) {
+        if (confirm('Import QR code history as well? This will replace your current history.')) {
+          qrHistory.splice(0, qrHistory.length, ...data.history);
+        }
+      }
+      
+      saveToStorage();
+      updateUI();
+      updateGalleryDisplay();
+      showToast('Settings imported successfully', 'success');
+      
+    } catch (error) {
+      console.error('Import error:', error);
+      showToast('Error importing settings file', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// UI Updates
+function updateUI() {
+  updateStorageStats();
+  updateHeaderStats();
+}
+
+function updateStorageStats() {
+  const totalQRsEl = document.getElementById('totalQRs');
+  const storageUsedEl = document.getElementById('storageUsed');
+  
+  if (totalQRsEl) totalQRsEl.textContent = qrHistory.length;
+  
+  if (storageUsedEl) {
+    const dataSize = JSON.stringify(qrHistory).length;
+    const sizeInKB = Math.round(dataSize / 1024);
+    storageUsedEl.textContent = `${sizeInKB} KB`;
+  }
+}
+
+function updateHeaderStats() {
+  const totalGeneratedEl = document.getElementById('totalGenerated');
+  if (totalGeneratedEl) {
+    totalGeneratedEl.textContent = qrHistory.length;
+  }
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  initializeApp();
+}
