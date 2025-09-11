@@ -17,10 +17,131 @@ const STORAGE_KEYS = {
   stats: 'qr_stats_v2'
 };
 
-// Initialize Application
+ // Fixed Preview Management Function
+function updatePreview() {
+  const textInput = document.getElementById('textInput');
+  const charCount = document.getElementById('charCount');
+  const sizeInfo = document.getElementById('sizeInfo');
+  const preview = document.getElementById('qrPreview');
+  
+  if (!textInput || !preview) {
+    console.error('Preview elements not found');
+    return;
+  }
+
+  const text = textInput.value.trim();
+  
+  // Update character count and size info
+  if (charCount) charCount.textContent = text.length;
+  if (sizeInfo) sizeInfo.textContent = `${currentSettings.size}×${currentSettings.size}`;
+  
+  if (!text) {
+    preview.innerHTML = `
+      <div class="preview-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <rect x="7" y="7" width="3" height="3"/>
+          <rect x="14" y="7" width="3" height="3"/>
+          <rect x="7" y="14" width="3" height="3"/>
+          <rect x="14" y="14" width="3" height="3"/>
+        </svg>
+        <p>Preview will appear here</p>
+      </div>
+    `;
+    return;
+  }
+  
+  try {
+    // Clear existing content first
+    preview.innerHTML = '';
+    
+    // Create a temporary container for QR generation
+    const tempContainer = document.createElement('div');
+    tempContainer.style.display = 'none';
+    document.body.appendChild(tempContainer);
+    
+    // Generate QR code in temporary container
+    const qr = new QRCode(tempContainer, {
+      text: text,
+      width: 200,
+      height: 200,
+      colorDark: currentSettings.darkColor || '#000000',
+      colorLight: currentSettings.lightColor || '#ffffff',
+      correctLevel: QRCode.CorrectLevel[currentSettings.errorCorrection] || QRCode.CorrectLevel.M
+    });
+    
+    // Wait for QR code to be generated and then move it to preview
+    setTimeout(() => {
+      const qrElement = tempContainer.querySelector('canvas') || tempContainer.querySelector('img');
+      if (qrElement) {
+        preview.appendChild(qrElement.cloneNode(true));
+      } else {
+        preview.innerHTML = '<p style="color: var(--accent-danger);">Error generating preview</p>';
+      }
+      
+      // Clean up temporary container
+      document.body.removeChild(tempContainer);
+    }, 100);
+    
+  } catch (error) {
+    console.error('Preview generation error:', error);
+    preview.innerHTML = '<p style="color: var(--accent-danger);">Preview generation failed</p>';
+  }
+}
+
+// Ensure QRCode library is loaded before calling updatePreview
+function ensureQRLibrary() {
+  return new Promise((resolve, reject) => {
+    if (typeof QRCode !== 'undefined') {
+      resolve();
+    } else {
+      // Wait for library to load
+      let attempts = 0;
+      const maxAttempts = 50;
+      const checkInterval = setInterval(() => {
+        attempts++;
+        if (typeof QRCode !== 'undefined') {
+          clearInterval(checkInterval);
+          resolve();
+        } else if (attempts >= maxAttempts) {
+          clearInterval(checkInterval);
+          reject(new Error('QRCode library failed to load'));
+        }
+      }, 100);
+    }
+  });
+}
+
+// Enhanced debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func.apply(this, args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Initialize preview when page loads
 document.addEventListener('DOMContentLoaded', function() {
-  initializeApp();
+  ensureQRLibrary().then(() => {
+    // Set up text input listener with debounce
+    const textInput = document.getElementById('textInput');
+    if (textInput) {
+      textInput.addEventListener('input', debounce(updatePreview, 300));
+    }
+    
+    // Initial preview update
+    updatePreview();
+  }).catch(error => {
+    console.error('QRCode library not available:', error);
+    showToast('QRCode library failed to load', 'error');
+  });
 });
+
 
 function initializeApp() {
   loadStoredData();
@@ -219,18 +340,7 @@ function setupKeyboardShortcuts() {
   });
 }
 
-// Utility Functions
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
+ 
 
 function sanitizeFilename(text) {
   return text.replace(/[^\w\s-]/gi, '').replace(/\s+/g, '_').substring(0, 50);
@@ -655,62 +765,7 @@ function detectQRType(text) {
 }
 
 // Preview Management
-function updatePreview() {
-  const textInput = document.getElementById('textInput');
-  const charCount = document.getElementById('charCount');
-  const sizeInfo = document.getElementById('sizeInfo');
-  const preview = document.getElementById('qrPreview');
-  
-  if (!textInput || !charCount || !sizeInfo || !preview) return;
-
-  const text = textInput.value.trim();
-  charCount.textContent = text.length;
-  sizeInfo.textContent = `${currentSettings.size}×${currentSettings.size}`;
-  
-  if (!text) {
-    preview.innerHTML = `
-      <div class="preview-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-          <rect x="7" y="7" width="3" height="3"/>
-          <rect x="14" y="7" width="3" height="3"/>
-          <rect x="7" y="14" width="3" height="3"/>
-          <rect x="14" y="14" width="3" height="3"/>
-        </svg>
-        <p>Preview will appear here</p>
-      </div>
-    `;
-    return;
-  }
-  
-  // Generate preview QR
-  try {
-    const container = document.createElement('div');
-    const qr = new QRCode(container, {
-      text: text,
-      width: 200,
-      height: 200,
-      colorDark: currentSettings.darkColor,
-      colorLight: currentSettings.lightColor,
-      correctLevel: QRCode.CorrectLevel[currentSettings.errorCorrection]
-    });
-    
-    setTimeout(() => {
-      const canvas = container.querySelector('canvas');
-      const img = container.querySelector('img');
-      
-      preview.innerHTML = '';
-      if (canvas) {
-        preview.appendChild(canvas.cloneNode(true));
-      } else if (img) {
-        preview.appendChild(img.cloneNode(true));
-      }
-    }, 50);
-    
-  } catch (error) {
-    console.error('Preview error:', error);
-  }
-}
+ 
 
 // Template Management
 function showTemplateForm(templateType) {
