@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QR Code Generator & Viewer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- QRCode.js library from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>QR Code Generator & Viewer</h1>
+      <div class="tag">Single or batch generation (separate by “;”). Persistent history with per-item download and clear.</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="generate">Generate</button>
+      <button class="tab" data-tab="view">View</button>
+    </div>
+
+    <!-- Generate Tab -->
+    <div id="tab-generate" class="content">
+      <div class="input-group">
+        <label for="textInput">Text to encode (use “;” to batch)</label>
+        <textarea id="textInput" placeholder="Examples:
+A single entry
+https://example.com
+user:pass@wifi
+
+Batch (separate by semicolon):
+item-1; item-2; item-3"></textarea>
+        <div class="note">Shortcuts: Ctrl+Enter → Generate single or batch from input. “Batch Generate” splits by “;” and trims; empty items are ignored.</div>
+      </div>
+      <div class="buttons">
+        <button class="primary" id="btnGenerate">Generate (auto-detect)</button>
+        <button class="warn" id="btnBatch">Batch Generate</button>
+        <button class="secondary" id="btnClearInput">Clear Input</button>
+      </div>
+    </div>
+
+    <!-- View Tab -->
+    <div id="tab-view" class="content" style="display:none;">
+      <div id="emptyState" class="panel">
+        <h3>No QR yet</h3>
+        <div class="tag">Go to Generate, enter text, and click Generate or Batch Generate.</div>
+      </div>
+
+      <div id="latestSection" class="latest" style="display:none;">
+        <div class="toolbar">
+          <div class="section-title">Latest</div>
+          <button class="ghost" id="btnClearHistory">Clear history</button>
+        </div>
+        <div class="latest-grid">
+          <div class="panel">
+            <h3>Encoded Text</h3>
+            <div id="latestText" class="encoded-text"></div>
+          </div>
+          <div class="panel">
+            <h3>QR Code</h3>
+            <div class="qr-box">
+              <div id="latestQr"></div>
+            </div>
+            <div class="buttons" style="margin-top:12px;">
+              <button class="primary" id="btnDownloadLatest">Download PNG</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="historySection" style="display:none;">
+        <div class="section-title">History</div>
+        <div id="historyGrid" class="grid"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
