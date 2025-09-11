@@ -328,3 +328,40 @@ textInput.addEventListener('keydown', e => {
 
 // Load on start
 refreshHistoryUI();
+
+
+// Theme management
+function initializeTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeToggle(savedTheme);
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateThemeToggle(newTheme);
+}
+
+function updateThemeToggle(theme) {
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+  }
+}
+
+// Initialize theme on load
+document.addEventListener('DOMContentLoaded', () => {
+  initializeTheme();
+  
+  // Wire up theme toggle
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+  }
+});
+
+// ... rest of your existing script.js code stays the same
