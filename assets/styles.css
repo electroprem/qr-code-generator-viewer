@@ -36,6 +36,10 @@ body {
   cursor: pointer;
   font-weight: 600;
   color: #475569;
+  transition: all 0.2s ease;
+}
+.tab:hover {
+  background: #e2e8f0;
 }
 .tab.active {
   background: #fff;
@@ -62,12 +66,34 @@ textarea {
   border-radius: 8px;
   font: inherit;
   resize: vertical;
+  transition: border-color 0.2s ease;
+}
+textarea:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+input[type="number"] {
+  width: 120px;
+  padding: 8px 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  font: inherit;
+  transition: border-color 0.2s ease;
+}
+input[type="number"]:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 .buttons {
   display: flex;
   gap: 12px;
   margin-top: 10px;
   flex-wrap: wrap;
+}
+button {
+  transition: all 0.2s ease;
 }
 button.primary {
   background: #16a34a;
@@ -78,6 +104,10 @@ button.primary {
   cursor: pointer;
   font-weight: 600;
 }
+button.primary:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+}
 button.secondary {
   background: #ef4444;
   color: #fff;
@@ -86,6 +116,10 @@ button.secondary {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+}
+button.secondary:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
 }
 button.warn {
   background: #f59e0b;
@@ -96,6 +130,10 @@ button.warn {
   cursor: pointer;
   font-weight: 600;
 }
+button.warn:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
 button.ghost {
   background: transparent;
   color: #ef4444;
@@ -104,6 +142,10 @@ button.ghost {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+}
+button.ghost:hover {
+  background: #ef4444;
+  color: #fff;
 }
 .note {
   color: #475569;
@@ -128,6 +170,11 @@ button.ghost {
   align-items: center;
   margin-bottom: 10px;
 }
+.toolbar-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .latest-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -148,6 +195,8 @@ button.ghost {
   max-height: 220px;
   overflow: auto;
   word-wrap: break-word;
+  font-size: 13px;
+  line-height: 1.4;
 }
 .qr-box {
   display: flex;
@@ -171,6 +220,11 @@ button.ghost {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .card-qr {
   display: flex;
@@ -187,6 +241,8 @@ button.ghost {
   font-size: 13px;
   color: #0f172a;
   border-top: 1px solid #eef2f6;
+  word-wrap: break-word;
+  flex-grow: 1;
 }
 .card-actions {
   display: flex;
@@ -201,5 +257,13 @@ button.ghost {
 @media (max-width: 900px) {
   .latest-grid {
     grid-template-columns: 1fr;
+  }
+  .toolbar {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .toolbar-buttons {
+    justify-content: center;
   }
 }

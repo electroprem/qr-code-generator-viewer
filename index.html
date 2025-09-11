@@ -4,16 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QR Code Generator & Viewer</title>
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="style.css" />
   <!-- QRCode.js library from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
-  <script src="assets/js/script.js" defer></script>
+  <!-- JSZip library for batch downloads -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>QR Code Generator & Viewer</h1>
-      <div class="tag">Single or batch generation (separate by “;”). Persistent history with per-item download and clear.</div>
+      <div class="tag">Single or batch generation (separate by ";"). Persistent history with per-item download and batch ZIP export.</div>
     </div>
 
     <div class="tabs">
@@ -24,7 +26,7 @@
     <!-- Generate Tab -->
     <div id="tab-generate" class="content">
       <div class="input-group">
-        <label for="textInput">Text to encode (use “;” to batch)</label>
+        <label for="textInput">Text to encode (use ";" to batch)</label>
         <textarea id="textInput" placeholder="Examples:
 A single entry
 https://example.com
@@ -32,8 +34,15 @@ user:pass@wifi
 
 Batch (separate by semicolon):
 item-1; item-2; item-3"></textarea>
-        <div class="note">Shortcuts: Ctrl+Enter → Generate single or batch from input. “Batch Generate” splits by “;” and trims; empty items are ignored.</div>
+        <div class="note">Shortcuts: Ctrl+Enter → Generate single or batch from input. "Batch Generate" splits by ";" and trims; empty items are ignored.</div>
       </div>
+
+      <div class="input-group">
+        <label for="exportMargin">Export margin (px)</label>
+        <input type="number" id="exportMargin" value="32" min="0" max="100" />
+        <div class="note">Adds white space around QR codes when downloading. Recommended for printing or dark backgrounds.</div>
+      </div>
+
       <div class="buttons">
         <button class="primary" id="btnGenerate">Generate (auto-detect)</button>
         <button class="warn" id="btnBatch">Batch Generate</button>
@@ -51,7 +60,10 @@ item-1; item-2; item-3"></textarea>
       <div id="latestSection" class="latest" style="display:none;">
         <div class="toolbar">
           <div class="section-title">Latest</div>
-          <button class="ghost" id="btnClearHistory">Clear history</button>
+          <div class="toolbar-buttons">
+            <button class="primary" id="btnDownloadZip">Download All (ZIP)</button>
+            <button class="ghost" id="btnClearHistory">Clear history</button>
+          </div>
         </div>
         <div class="latest-grid">
           <div class="panel">
@@ -71,7 +83,7 @@ item-1; item-2; item-3"></textarea>
       </div>
 
       <div id="historySection" style="display:none;">
-        <div class="section-title">History</div>
+        <div class="section-title">History (<span id="historyCount">0</span> items)</div>
         <div id="historyGrid" class="grid"></div>
       </div>
     </div>
