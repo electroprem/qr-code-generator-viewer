@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
 import {
   Copy,
   Check,
@@ -19,12 +18,11 @@ import {
   Share2,
   RotateCcw,
   AlertCircle,
-  Info,
+  X,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
-import { Badge } from '@components/ui/Badge';
-import { Modal } from '@components/ui/Modal';
+import { Input } from '@components/ui/Input';
 import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
 import { Tooltip } from '@components/ui/Tooltip';
 import { Tabs, TabList, TabTrigger, TabContent } from '@components/ui/CompoundTabs';
@@ -161,14 +159,6 @@ function getTypeIcon(type: string): React.ReactNode {
   return icons[type] || <QrCode className="w-5 h-5" />;
 }
 
-function getTypeBadgeVariant(type: string): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'destructive' {
-  const variants: Record<string, 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'destructive'> = {
-    url: 'primary', text: 'default', email: 'secondary', phone: 'success',
-    sms: 'warning', wifi: 'primary', vcard: 'secondary', location: 'destructive',
-    whatsapp: 'success', upi: 'warning', crypto: 'destructive', calendar: 'primary', applink: 'secondary',
-  };
-  return variants[type] || 'default';
-}
 
 export function ScanResult({ result, onAction, onClose, className }: ScanResultProps) {
   const { showToast } = useToast();
@@ -238,8 +228,7 @@ export function ScanResult({ result, onAction, onClose, className }: ScanResultP
     }
     try {
       const response = await fetch(qrDataUrl);
-      const blob = await response.blob();
-      const png = URL.createObjectURL(blob);
+      await response.blob();
       
       const svgResult = await (async () => {
         const engine = new QRCodeEngine();
@@ -434,7 +423,7 @@ export function ScanResult({ result, onAction, onClose, className }: ScanResultP
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'result' | 'qr' | 'save')} className="w-full">
         <TabList className="w-full border-b border-glass-border dark:border-glass-border-dark">
           <TabTrigger value="result" className="flex-1">Result</TabTrigger>
           {qrDataUrl && <TabTrigger value="qr" className="flex-1">QR Code</TabTrigger>}
@@ -606,6 +595,3 @@ export function ScanResult({ result, onAction, onClose, className }: ScanResultP
     </Card>
   );
 }
-
-import { X } from 'lucide-react';
-import { TabContent } from '@components/ui/Tabs';

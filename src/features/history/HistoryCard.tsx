@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
 import {
   Star,
   Trash2,
@@ -10,16 +9,6 @@ import {
   Plus,
   Share2,
   MoreVertical,
-  ExternalLink,
-  Wifi,
-  Mail,
-  Phone,
-  MessageSquare,
-  MapPin,
-  User,
-  Calendar,
-  Smartphone,
-  Bitcoin,
   QrCode,
 } from 'lucide-react';
 import { Card } from '@components/ui/Card';
@@ -29,27 +18,7 @@ import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown
 import { Tooltip } from '@components/ui/Tooltip';
 import { Modal } from '@components/ui/Modal';
 import type { QRRecord } from '@lib/storage/indexedDB';
-import { useQRStore } from '@store/qrStore';
 import { useToast } from '@components/providers/ToastProvider';
-
-function getTypeIcon(type: string): React.ReactNode {
-  const icons: Record<string, React.ReactNode> = {
-    url: <QrCode className="w-5 h-5" />,
-    text: <span className="text-xl">📝</span>,
-    email: <Mail className="w-5 h-5" />,
-    phone: <Phone className="w-5 h-5" />,
-    sms: <MessageSquare className="w-5 h-5" />,
-    wifi: <Wifi className="w-5 h-5" />,
-    vcard: <User className="w-5 h-5" />,
-    location: <MapPin className="w-5 h-5" />,
-    whatsapp: <MessageSquare className="w-5 h-5" />,
-    upi: <span className="text-xl">💰</span>,
-    crypto: <Bitcoin className="w-5 h-5" />,
-    calendar: <Calendar className="w-5 h-5" />,
-    applink: <Smartphone className="w-5 h-5" />,
-  };
-  return icons[type] || <QrCode className="w-5 h-5" />;
-}
 
 function getTypeBadgeVariant(type: string): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'destructive' {
   const variants: Record<string, 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'destructive'> = {
@@ -82,7 +51,7 @@ interface HistoryCardProps {
   onAction: (action: string) => void;
 }
 
-export function HistoryCard({ qr, isSelected, onSelect, onAction }: HistoryCardProps) {
+export function HistoryCard({ qr, isSelected, onSelect: _onSelect, onAction }: HistoryCardProps) {
   const { showToast } = useToast();
   const [showModal, setShowModal] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -166,7 +135,7 @@ export function HistoryCard({ qr, isSelected, onSelect, onAction }: HistoryCardP
                 variant="ghost"
                 size="icon"
                 className={clsx('bg-black/50 backdrop-blur', qr.favorite && 'text-yellow-500')}
-                onClick={(e) => { e.stopPropagation(); onAction('favorite'); }}
+                onClick={() => onAction('favorite')}
                 aria-label={qr.favorite ? 'Remove from favorites' : 'Add to favorites'}
               >
                 <Star className={clsx('w-5 h-5', qr.favorite ? 'fill-current' : '')} />
@@ -184,7 +153,8 @@ export function HistoryCard({ qr, isSelected, onSelect, onAction }: HistoryCardP
                 {actions.map((action, i) => (
                   <DropdownItem
                     key={i}
-                    onClick={(e) => { e.stopPropagation(); action.action(); }}
+                    value={String(i)}
+                    onClick={() => { action.action(); }}
                     className={clsx(action.destructive && 'text-red-500')}
                   >
                     {typeof action.icon === 'string' ? (
@@ -245,7 +215,7 @@ export function HistoryCard({ qr, isSelected, onSelect, onAction }: HistoryCardP
                 variant="ghost"
                 size="icon"
                 className="flex-1"
-                onClick={(e) => { e.stopPropagation(); handleCopy(); }}
+                onClick={handleCopy}
                 aria-label="Copy QR data"
               >
                 {copied ? (
@@ -260,7 +230,7 @@ export function HistoryCard({ qr, isSelected, onSelect, onAction }: HistoryCardP
                 variant="ghost"
                 size="icon"
                 className="flex-1"
-                onClick={(e) => { e.stopPropagation(); handleDownload('png'); }}
+                onClick={() => handleDownload('png')}
                 aria-label="Download PNG"
               >
                 <Download className="w-5 h-5" />
@@ -271,7 +241,7 @@ export function HistoryCard({ qr, isSelected, onSelect, onAction }: HistoryCardP
                 variant="primary"
                 size="sm"
                 className="flex-1"
-                onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+                onClick={() => setShowModal(true)}
                 aria-label="View details"
               >
                 Details

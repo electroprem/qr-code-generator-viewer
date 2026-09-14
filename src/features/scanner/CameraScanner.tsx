@@ -15,19 +15,13 @@ import {
   MessageSquare,
   MapPin,
   User,
-  Calendar,
   Smartphone,
-  Bitcoin,
-  QrCode,
-  Loader2,
   Volume2,
-  VolumeX,
   Vibrate,
+  Check,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
-import { Badge } from '@components/ui/Badge';
-import { Modal } from '@components/ui/Modal';
 import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
 import { Tooltip } from '@components/ui/Tooltip';
 import { useToast } from '@components/providers/ToastProvider';
@@ -50,7 +44,6 @@ export function CameraScanner({ onScanResult, className }: CameraScannerProps) {
   const [hapticFeedback, setHapticFeedback] = useState(true);
   const [showResult, setShowResult] = useState<string | null>(null);
   const [lastResult, setLastResult] = useState<string>('');
-  const videoRef = useRef<HTMLVideoElement>(null);
   const html5QrcodeRef = useRef<Html5Qrcode | null>(null);
   const scanIntervalRef = useRef<number>();
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -146,7 +139,7 @@ export function CameraScanner({ onScanResult, className }: CameraScannerProps) {
         selectedCameraId || { facingMode },
         config,
         handleScanSuccess,
-        (error) => {
+        (_error) => {
           // Scan error, ignore
         }
       );
@@ -182,7 +175,7 @@ export function CameraScanner({ onScanResult, className }: CameraScannerProps) {
     }
   };
 
-  const toggleCamera = () => {
+  const _toggleCamera = () => {
     const newMode = facingMode === 'user' ? 'environment' : 'user';
     setFacingMode(newMode);
     if (isScanning) {
@@ -399,6 +392,7 @@ export function CameraScanner({ onScanResult, className }: CameraScannerProps) {
                         {cameras.map((cam) => (
                           <DropdownItem
                             key={cam.deviceId}
+                            value={cam.deviceId}
                             onClick={() => selectCamera(cam.deviceId)}
                             className={clsx(selectedCameraId === cam.deviceId && 'bg-primary/10')}
                           >

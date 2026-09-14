@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 export type CardVariant = 'default' | 'elevated' | 'outlined' | 'glass';
 export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 
-export interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ref'> {
+export interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'ref' | 'onAnimationStart'> {
   variant?: CardVariant;
   padding?: CardPadding;
   hover?: boolean;
@@ -44,7 +44,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
           className={baseClass}
           whileHover={{ y: -4, boxShadow: 'var(--shadow-xl)' }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          {...props}
+          {...(props as any)}
         >
           {children}
         </motion.div>

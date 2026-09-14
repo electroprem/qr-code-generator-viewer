@@ -1,6 +1,6 @@
 import { forwardRef, useId } from 'react';
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
+// framer-motion not used in this component
 
 export interface SliderProps {
   label?: string;

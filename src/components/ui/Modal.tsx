@@ -1,4 +1,4 @@
-import { useEffect, useRef, ReactNode, Fragment } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
@@ -38,7 +38,7 @@ export function Modal({
   showClose = true,
   closeOnOverlayClick = true,
   closeOnEscape = true,
-  className,
+  className: _className,
   footer,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);

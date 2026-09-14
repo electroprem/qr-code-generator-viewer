@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
-import { Download, Copy, Check, RotateCcw, Maximize2, Minimize2, AlertCircle, ScanLine } from 'lucide-react';
+import { Download, Copy, Check, RotateCcw, Maximize2, AlertCircle, ScanLine } from 'lucide-react';
 import { Card } from '@components/ui/Card';
 import { Button } from '@components/ui/Button';
 import { Tooltip } from '@components/ui/Tooltip';
@@ -51,7 +51,7 @@ export function QRCodeDisplay({
   isGenerating,
   error,
   options,
-  renderAs = 'svg',
+  renderAs: _renderAs = 'svg',
   onGenerate,
   onDownload,
   onCopy,

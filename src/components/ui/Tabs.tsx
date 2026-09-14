@@ -58,7 +58,6 @@ export const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
     const updateIndicator = () => {
       const activeTab = tabsRef.current.find((tab) => tab?.dataset.value === currentValue);
       if (activeTab && indicatorRef.current && tabsListRef.current) {
-        const parent = tabsListRef.current;
         if (orientation === 'horizontal') {
           setIndicatorStyle({
             width: activeTab.offsetWidth,
@@ -169,7 +168,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(
 
     const tabs: TabItem[] = [];
     React.Children.forEach(children, (child) => {
-      if (React.isValidElement(child) && (child.type === TabsTrigger || child.type.displayName === 'TabsTrigger')) {
+      if (React.isValidElement(child) && (child.type === TabsTrigger || (typeof child.type !== 'string' && (child.type as any).displayName === 'TabsTrigger'))) {
         tabs.push({
           value: child.props.value,
           label: child.props.children as string,
@@ -183,7 +182,6 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(
     const updateIndicator = () => {
       const activeTab = tabsRef.current.find((tab) => tab?.dataset.value === value);
       if (activeTab && indicatorRef.current && tabsListRef.current) {
-        const parent = tabsListRef.current;
         if (orientation === 'horizontal') {
           setIndicatorStyle({
             width: activeTab.offsetWidth,
@@ -277,7 +275,7 @@ interface TabsTriggerProps {
 }
 
 export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
-  ({ value, children, icon, disabled, badge, tabsRef, styles, value: contextValue, onChange, orientation, handleKeyDown, index, className, ...props }, ref) => {
+  ({ value, children, icon, disabled, badge, tabsRef, styles, value: contextValue, onChange, orientation, handleKeyDown, index, className, ...props }, _ref) => {
     const isActive = contextValue === value;
     return (
       <motion.button

@@ -9,7 +9,6 @@ import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown
 import { Tooltip } from '@components/ui/Tooltip';
 import { Badge } from '@components/ui/Badge';
 import { useQRStore, selectAllTags, selectByType } from '@store/qrStore';
-import type { QRFilter } from '@lib/storage/indexedDB';
 
 const QR_TYPES = [
   'url', 'text', 'email', 'phone', 'sms', 'wifi',
@@ -39,7 +38,6 @@ interface HistoryFiltersProps {
 export function HistoryFilters({ className }: HistoryFiltersProps) {
   const {
     ui,
-    qrHistory,
     setFilter,
     setSearch,
     setViewMode,
@@ -176,6 +174,7 @@ export function HistoryFilters({ className }: HistoryFiltersProps) {
                   {(['createdAt', 'updatedAt', 'type', 'favorite'] as const).map((sort) => (
                     <DropdownItem
                       key={sort}
+                      value={sort}
                       onClick={() => setSort(sort)}
                       className={sortBy === sort ? 'bg-primary/10' : ''}
                     >
@@ -234,12 +233,12 @@ export function HistoryFilters({ className }: HistoryFiltersProps) {
                       </Button>
                     </DropdownTrigger>
                     <div className="dropdown-menu dropdown-menu-end w-56">
-                      <DropdownItem onClick={() => handleTypeChange('all')}>
+                      <DropdownItem value="all" onClick={() => handleTypeChange('all')}>
                         {selectedType === 'all' && <span className="w-4 h-4 text-primary">✓</span>}
                         All Types
                       </DropdownItem>
                       {QR_TYPES.map((type) => (
-                        <DropdownItem key={type} onClick={() => handleTypeChange(type)}>
+                        <DropdownItem key={type} value={type} onClick={() => handleTypeChange(type)}>
                           {selectedType === type && <span className="w-4 h-4 text-primary">✓</span>}
                           {TYPE_LABELS[type]} {byType[type] && <span className="text-muted-foreground ml-auto">({byType[type].length})</span>}
                         </DropdownItem>
@@ -265,11 +264,12 @@ export function HistoryFilters({ className }: HistoryFiltersProps) {
                     </DropdownTrigger>
                     <div className="dropdown-menu dropdown-menu-end w-64 max-h-64 overflow-auto">
                       {allTags.length === 0 ? (
-                        <DropdownItem className="text-muted-foreground pointer-events-none">No tags yet</DropdownItem>
+                        <DropdownItem value="no-tags" className="text-muted-foreground pointer-events-none">No tags yet</DropdownItem>
                       ) : (
                         allTags.map((tag) => (
                           <DropdownItem
                             key={tag}
+                            value={tag}
                             onClick={() => handleTagToggle(tag)}
                             className="flex items-center justify-between"
                           >

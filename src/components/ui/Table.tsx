@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, ReactNode } from 'react';
+import { useState, useMemo, ReactNode } from 'react';
 import { clsx } from 'clsx';
 import { ChevronUp, ChevronDown, ChevronsUpDown, Check, CheckSquare, MinusSquare } from 'lucide-react';
 
@@ -54,7 +54,7 @@ export function Table<T>({
   selectable = false,
   multiSelect = true,
   sortable = true,
-  resizable = false,
+  resizable: _resizable = false,
   striped = true,
   hoverable = true,
   bordered = true,
@@ -65,7 +65,7 @@ export function Table<T>({
 }: TableProps<T>) {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const [_hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [localSelectedKeys, setLocalSelectedKeys] = useState<Set<string>>(new Set());
 
   const isControlled = controlledSelectedKeys !== undefined;
@@ -105,17 +105,17 @@ export function Table<T>({
     const newSelected = new Set(selectedKeys);
     if (newSelected.has(key)) newSelected.delete(key);
     else newSelected.add(key);
-    setSelectedKeys(newSelected);
+    setSelectedKeys?.(newSelected);
     onSelectionChange?.(newSelected);
   };
 
   const toggleSelectAll = () => {
     if (selectedKeys.size === sortedData.length) {
-      setSelectedKeys(new Set());
+      setSelectedKeys?.(new Set());
       onSelectionChange?.(new Set());
     } else {
       const allKeys = new Set(sortedData.map(keyAccessor));
-      setSelectedKeys(allKeys);
+      setSelectedKeys?.(allKeys);
       onSelectionChange?.(allKeys);
     }
   };
@@ -279,7 +279,7 @@ export function SimpleTable<T>({
   className,
   striped = true,
   hoverable = true,
-  bordered = true,
+  bordered: _bordered = true,
   compact = false,
   emptyMessage = 'No data available',
 }: SimpleTableProps<T>) {

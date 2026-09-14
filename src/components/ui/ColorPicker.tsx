@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
+import { forwardRef, useState, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye } from 'lucide-react';
@@ -23,7 +23,7 @@ const DEFAULT_PRESETS = [
 ];
 
 export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(
-  ({ className, label, value, onChange, presets = DEFAULT_PRESETS, showAlpha = false, showInput = true, showEyedropper = true, id }, ref) => {
+  ({ className, label, value, onChange, presets = DEFAULT_PRESETS, showAlpha = false, showInput = true, showEyedropper = true, id }, _ref) => {
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState(value);
     const pickerId = id || `color-picker-${Math.random().toString(36).slice(2)}`;

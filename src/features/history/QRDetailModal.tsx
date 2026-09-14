@@ -1,10 +1,7 @@
-import { useState, useCallback, useEffect } from 'react';
-import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
+import { useState, useCallback } from 'react';
 import {
   Download,
   Copy,
-  Check,
   ExternalLink,
   Wifi,
   Mail,
@@ -18,15 +15,13 @@ import {
   QrCode,
   RotateCcw,
   Edit2,
-  Plus,
   Share2,
   Trash2,
-  X,
   Settings,
+  Star,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
-import { Badge } from '@components/ui/Badge';
 import { Modal } from '@components/ui/Modal';
 import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
 import { Tooltip } from '@components/ui/Tooltip';
@@ -56,14 +51,6 @@ function getTypeIcon(type: string): React.ReactNode {
   return icons[type] || <QrCode className="w-5 h-5" />;
 }
 
-function getTypeBadgeVariant(type: string): 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'destructive' {
-  const variants: Record<string, 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'destructive'> = {
-    url: 'primary', text: 'default', email: 'secondary', phone: 'success',
-    sms: 'warning', wifi: 'primary', vcard: 'secondary', location: 'destructive',
-    whatsapp: 'success', upi: 'warning', crypto: 'destructive', calendar: 'primary', applink: 'secondary',
-  };
-  return variants[type] || 'default';
-}
 
 function parseQRData(type: string, data: string): Record<string, string> {
   const result: Record<string, string> = { Raw: data };
@@ -249,7 +236,7 @@ export function QRDetailModal({ isOpen, onClose, qr, onAction }: QRDetailModalPr
       closeOnEscape
     >
       <div className="space-y-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'details' | 'regenerate' | 'export')} className="w-full">
           <TabList className="w-full">
             <TabTrigger value="details" className="flex-1">Details</TabTrigger>
             <TabTrigger value="export" className="flex-1">Export</TabTrigger>
@@ -304,24 +291,24 @@ export function QRDetailModal({ isOpen, onClose, qr, onAction }: QRDetailModalPr
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Version</dt>
-                    <dd className="font-medium">{qr.settings.version || 'Auto'}</dd>
+                    <dd className="font-medium">{String(qr.settings.version || 'Auto')}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Mode</dt>
-                    <dd className="font-medium">{qr.settings.mode || 'Default'}</dd>
+                    <dd className="font-medium">{String(qr.settings.mode || 'Default')}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Dot Style</dt>
-                    <dd className="font-medium capitalize">{qr.settings.dotsOptions?.type || 'Default'}</dd>
+                    <dd className="font-medium capitalize">{String(qr.settings.dotsOptions?.type || 'Default')}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Corner Style</dt>
-                    <dd className="font-medium capitalize">{qr.settings.cornersSquareOptions?.type || 'Default'}</dd>
+                    <dd className="font-medium capitalize">{String(qr.settings.cornersSquareOptions?.type || 'Default')}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Background</dt>
                     <dd className="font-medium">
-                      {qr.settings.backgroundOptions?.color || 'Transparent'}
+                      {String(qr.settings.backgroundOptions?.color || 'Transparent')}
                     </dd>
                   </div>
                   <div className="flex justify-between">
@@ -390,11 +377,11 @@ export function QRDetailModal({ isOpen, onClose, qr, onAction }: QRDetailModalPr
                   </Tooltip>
                 </DropdownTrigger>
                 <div className="dropdown-menu dropdown-menu-end">
-                  <DropdownItem onClick={() => { handleAction('share'); }}>
+                  <DropdownItem value="share-image" onClick={() => { handleAction('share'); }}>
                     <Share2 className="w-4 h-4" />
                     Share Image
                   </DropdownItem>
-                  <DropdownItem onClick={() => { navigator.share({ text: qr.data }); }}>
+                  <DropdownItem value="share-data" onClick={() => { navigator.share({ text: qr.data }); }}>
                     <ExternalLink className="w-4 h-4" />
                     Share Data
                   </DropdownItem>

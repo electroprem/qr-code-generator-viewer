@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { Palette, Monitor, Smartphone, Save, RefreshCw, Trash2, Download, Upload, Shield, Bell, Key, Moon, Sun, Cpu, Check } from 'lucide-react';
+import { Palette, Monitor, Save, RefreshCw, Trash2, Download, Upload, Shield, Bell, Key, Moon, Sun, Cpu, Check } from 'lucide-react';
 import { clsx } from 'clsx';
-import { motion } from 'framer-motion';
 import { Button } from '@components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@components/ui/Card';
 import { Input } from '@components/ui/Input';
-import { useTheme } from '@components/providers/ThemeProvider';
+import { useTheme, Theme } from '@components/providers/ThemeProvider';
 import { useToast } from '@components/providers/ToastProvider';
 
 export function SettingsPage() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { showToast } = useToast();
   const [settings, setSettings] = useState({
     autoSave: true,
@@ -113,7 +112,7 @@ export function SettingsPage() {
                 return (
                   <button
                     key={option.value}
-                    onClick={() => setTheme(option.value)}
+                    onClick={() => setTheme(option.value as Theme)}
                     className={clsx(
                       'relative p-4 rounded-xl border-2 transition-all duration-200 text-left',
                       theme === option.value

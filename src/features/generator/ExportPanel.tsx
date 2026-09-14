@@ -5,8 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Button } from '@components/ui/Button';
 import { Tabs } from '@components/ui/Tabs';
 import { Slider } from '@components/ui/Slider';
-import { Select } from '@components/ui/Input';
-import { Input } from '@components/ui/Input';
+
 import { Tooltip } from '@components/ui/Tooltip';
 
 export type ExportFormat = 'png' | 'svg' | 'jpeg' | 'webp' | 'pdf';
@@ -113,7 +112,7 @@ export function ExportPanel({ dataUrl, size, onExport, onCopy, className }: Expo
             icon: f.icon,
           }))}
           value={activeFormat}
-          onChange={setActiveFormat}
+          onChange={(v) => setActiveFormat(v as ExportFormat)}
           variant="enclosed"
           className="mb-4"
         />

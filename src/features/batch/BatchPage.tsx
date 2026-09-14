@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { FileText, Download, Plus, Trash2, Check, X, Upload, Save } from 'lucide-react';
+import { Download, Plus, Trash2, Check, X, Upload } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/Card';
@@ -147,12 +147,12 @@ export function BatchPage() {
       }
 
       if (parsed.length > 0) {
-        const newRows: BatchRow[] = parsed.map((row, i) => ({
+        const newRows: BatchRow[] = (parsed as any[]).map((row, i) => ({
           id: `${Date.now()}-${i}`,
           type: row.type || 'url',
           content: row.content || row.data || '',
           label: row.label || row.name || '',
-          status: 'pending'
+          status: 'pending' as const
         })).filter(r => r.content);
         
         setRows(newRows);

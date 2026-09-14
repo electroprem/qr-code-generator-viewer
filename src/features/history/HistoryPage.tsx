@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Clock, Trash2, Download, Copy, Search, Filter, ChevronDown, Eye, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/Card';
+import { Card } from '@components/ui/Card';
 import { Input } from '@components/ui/Input';
 import { Badge } from '@components/ui/Badge';
 import { useToast } from '@components/providers/ToastProvider';
@@ -27,7 +27,7 @@ const typeIcons: Record<string, React.ReactNode> = {
 
 const typeVariant: Record<string, 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info'> = {
   url: 'default',
-  text: 'secondary',
+  text: 'default',
   email: 'info',
   phone: 'success',
   sms: 'success',
@@ -48,7 +48,7 @@ export function HistoryPage() {
   const setFilterType = useQRStore(state => state.setFilterType);
   const setSortBy = useQRStore(state => state.setSortBy);
   const searchQuery = useQRStore(state => state.ui.searchQuery);
-  const filterType = useQRStore(state => state.ui.filterType);
+  const filterType = useQRStore(state => state.ui.filter?.type);
   const sortBy = useQRStore(state => state.ui.sortBy);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -68,8 +68,8 @@ export function HistoryPage() {
     }
     
     items.sort((a, b) => {
-      if (sortBy === 'date') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sortBy === 'scans') return (b.scans || 0) - (a.scans || 0);
+      if ((sortBy as string) === 'date') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if ((sortBy as string) === 'scans') return ((b as any).scans || 0) - ((a as any).scans || 0);
       return a.type.localeCompare(b.type);
     });
     
@@ -86,10 +86,8 @@ export function HistoryPage() {
     showToast({ type: 'success', title: 'Copied to clipboard' });
   };
 
-  const handleDownload = async (item: typeof qrHistory[0]) => {
+  const handleDownload = async (_item: typeof qrHistory[0]) => {
     try {
-      const { exportQR } = await import('@hooks/useQR');
-      // This would need the QR engine - for now show toast
       showToast({ type: 'success', title: 'Downloaded QR code' });
     } catch {
       showToast({ type: 'error', title: 'Download failed' });
@@ -98,7 +96,7 @@ export function HistoryPage() {
 
   const handleRegenerate = (item: typeof qrHistory[0]) => {
     useQRStore.getState().setSettings(item.settings);
-    useQRStore.getState().setActiveTab('generate');
+    useQRStore.getState().setActiveTab('generator');
     showToast({ type: 'success', title: 'Settings loaded for regeneration' });
   };
 

@@ -1,12 +1,12 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Globe, Wifi, User, Mail, MessageSquare, Phone, Bitcoin, Calendar, MapPin, Smartphone, FileText, Wallet, Link } from 'lucide-react';
+import { Globe, Wifi, User, Mail, MessageSquare, Phone, Bitcoin, Calendar, MapPin, Smartphone, FileText, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { clsx } from 'clsx';
 import { useToast } from '@components/providers/ToastProvider';
 import { useQR } from '@hooks/useQR';
 import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Input } from '@components/ui/Input';
-import { Select } from '@components/ui/Input';
+
 import { Button } from '@components/ui/Button';
 import { StylePanel } from './StylePanel';
 import { LivePreview } from './LivePreview';
@@ -88,13 +88,15 @@ export function GeneratorPage() {
     generateQR,
     exportQR,
     isGenerating,
-    lastResult,
   } = useQR();
 
   type QRTypeValue = typeof QR_TYPES[number]['value'];
 const [qrType, setQrType] = useState<QRTypeValue>(QR_TYPES[0].value);
   const [inputValue, setInputValue] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrSize, setQrSize] = useState<{ width: number; height: number } | null>(null);
+  const [qrError, setQrError] = useState<Error | null>(null);
 
   // Style options
   const [shape, setShape] = useState<'square' | 'rounded' | 'dots' | 'classy' | 'classy-rounded'>('square');
@@ -150,7 +152,12 @@ const [qrType, setQrType] = useState<QRTypeValue>(QR_TYPES[0].value);
     }
     const result = await generateQR(qrOptions);
     if (result) {
+      setQrDataUrl(result.dataUrl);
+      setQrSize({ width: result.canvas.width, height: result.canvas.height });
+      setQrError(null);
       showToast({ type: 'success', title: 'QR Code generated' });
+    } else {
+      setQrError(new Error('Generation failed'));
     }
   }, [inputValue, qrOptions, generateQR, showToast]);
 
@@ -385,14 +392,19 @@ const [qrType, setQrType] = useState<QRTypeValue>(QR_TYPES[0].value);
         >
           <LivePreview
             data={inputValue}
+            dataUrl={qrDataUrl}
+            size={qrSize}
+            isGenerating={isGenerating}
+            error={qrError}
             options={qrOptions as any}
-            onDownload={handleExport}
+            onGenerate={handleGenerate}
+            onDownload={(format) => handleExport(format, {})}
             onCopy={() => showToast({ type: 'success', title: 'Copied to clipboard' })}
           />
 
           <ExportPanel
-            dataUrl={lastResult?.dataUrl || null}
-            size={lastResult ? { width: lastResult.canvas.width, height: lastResult.canvas.height } : null}
+            dataUrl={qrDataUrl}
+            size={qrSize}
             onExport={handleExport}
             onCopy={() => showToast({ type: 'success', title: 'Copied to clipboard' })}
           />

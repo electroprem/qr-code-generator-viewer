@@ -12,13 +12,11 @@ import {
   HardDrive,
   BarChart2,
   RotateCcw,
-  X,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Badge } from '@components/ui/Badge';
 import { Modal } from '@components/ui/Modal';
-import { Progress } from '@components/ui/Progress';
 import { useToast } from '@components/providers/ToastProvider';
 import { getStats, exportAll, importAll, clearAll } from '@lib/storage/indexedDB';
 import type { DBStats, ExportData } from '@lib/storage/indexedDB';

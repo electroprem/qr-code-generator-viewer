@@ -1,4 +1,4 @@
-import { forwardRef, useState, ReactNode } from 'react';
+import React, { forwardRef, useState, ReactNode } from 'react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, Globe } from 'lucide-react';

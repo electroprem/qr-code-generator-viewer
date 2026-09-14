@@ -2,7 +2,6 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import {
-  Image,
   Upload,
   X,
   CheckCircle,
@@ -13,9 +12,7 @@ import {
   MessageSquare,
   MapPin,
   User,
-  Calendar,
   Smartphone,
-  Bitcoin,
   QrCode,
   RotateCcw,
   Copy,
@@ -25,8 +22,6 @@ import {
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
 import { Badge } from '@components/ui/Badge';
-import { Modal } from '@components/ui/Modal';
-import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
 import { Tooltip } from '@components/ui/Tooltip';
 import { useToast } from '@components/providers/ToastProvider';
 import { Html5Qrcode } from 'html5-qrcode';
@@ -107,7 +102,11 @@ export function ImageScanner({ onScanResult, onSaveToHistory, className }: Image
     } finally {
       setScanning(false);
       if (html5QrcodeRef.current) {
-        await html5QrcodeRef.current.clear().catch(() => {});
+        try {
+          html5QrcodeRef.current.clear();
+        } catch {
+          // ignore
+        }
         html5QrcodeRef.current = null;
       }
     }
@@ -128,17 +127,6 @@ export function ImageScanner({ onScanResult, onSaveToHistory, className }: Image
     if (data.startsWith('intent://') || data.startsWith('android-app://')) return 'applink';
     return 'text';
   };
-
-  const handlePaste = useCallback((e: React.ClipboardEvent) => {
-    const items = e.clipboardData.items;
-    for (const item of items) {
-      if (item.type.startsWith('image/')) {
-        const file = item.getAsFile();
-        if (file) processFile(file);
-        break;
-      }
-    }
-  }, [processFile]);
 
   const clearImage = useCallback(() => {
     setPreview(null);
@@ -165,7 +153,7 @@ export function ImageScanner({ onScanResult, onSaveToHistory, className }: Image
     window.open(url, '_blank');
   }, []);
 
-  const getActionButtons = (res: string, type: string) => {
+  const getActionButtons = (res: string, _type: string) => {
     const buttons = [
       <Tooltip key="copy" content="Copy">
         <Button variant="ghost" size="icon" onClick={copyResult}>
@@ -288,8 +276,10 @@ export function ImageScanner({ onScanResult, onSaveToHistory, className }: Image
 
   useEffect(() => {
     const handlePasteEvent = (e: ClipboardEvent) => {
-      const items = e.clipboardData.items;
-      for (const item of items) {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
         if (item.type.startsWith('image/')) {
           const file = item.getAsFile();
           if (file) processFile(file);

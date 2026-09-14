@@ -44,10 +44,9 @@ export function checkForUpdate() {
 
 export function onSWUpdate(callback: (registration: ServiceWorkerRegistration) => void) {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (navigator.serviceWorker.controller) {
-        callback(navigator.serviceWorker.controller);
-      }
+    navigator.serviceWorker.addEventListener('controllerchange', async () => {
+      const registration = await navigator.serviceWorker.ready;
+      callback(registration);
     });
   }
 }

@@ -9,8 +9,6 @@ import {
   flexRender,
   createColumnHelper,
   SortingState,
-  ColumnDef,
-  Row,
 } from '@tanstack/react-table';
 import { clsx } from 'clsx';
 import {
@@ -19,7 +17,6 @@ import {
   Copy,
   GripVertical,
   Download,
-  X,
   Check,
   AlertCircle,
   Loader2,
@@ -33,14 +30,12 @@ import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown
 import { Tooltip } from '@components/ui/Tooltip';
 import { Card } from '@components/ui/Card';
 import { Modal } from '@components/ui/Modal';
-import { Tabs, TabList, TabTrigger, TabContent } from '@components/ui/CompoundTabs';
 import { QRCodeEngine, QROptions } from '@lib/qr/qrEngine';
 import { useToast } from '@components/providers/ToastProvider';
-import type { QRRecord } from '@lib/storage/indexedDB';
 
 const columnHelper = createColumnHelper<BatchRow>();
 
-interface BatchRow {
+export interface BatchRow {
   id: string;
   type: string;
   data: Record<string, string>;
@@ -77,11 +72,10 @@ const QR_TYPES = [
 
 function getFieldsForType(type: string): string[] {
   const t = QR_TYPES.find((qt) => qt.value === type);
-  return t?.fields || ['data'];
+  return t ? [...t.fields] : ['data'];
 }
 
 function buildDataString(type: string, data: Record<string, string>): string {
-  const fields = getFieldsForType(type);
   
   switch (type) {
     case 'url':
@@ -220,7 +214,7 @@ export function BatchTable({
       columnHelper.accessor('type', {
         header: 'Type',
         cell: ({ row }) => {
-          const type = row.getValue('type');
+          const type = row.getValue('type') as string;
           const typeInfo = QR_TYPES.find((t) => t.value === type);
           return (
             <Badge variant="outline" className="gap-1">
@@ -233,7 +227,7 @@ export function BatchTable({
       columnHelper.accessor('status', {
         header: 'Status',
         cell: ({ row }) => {
-          const status = row.getValue('status');
+          const status = row.getValue('status') as string;
           const variants: Record<string, 'default' | 'primary' | 'success' | 'warning' | 'destructive'> = {
             pending: 'default',
             processing: 'primary',
@@ -291,15 +285,15 @@ export function BatchTable({
                   </Button>
                 </DropdownTrigger>
                 <div className="dropdown-menu dropdown-menu-end">
-                  <DropdownItem onClick={() => setShowTypeModal(rowData.id)}>
+                  <DropdownItem value="edit" onClick={() => setShowTypeModal(rowData.id)}>
                     Edit fields
                   </DropdownItem>
-                  <DropdownItem onClick={() => duplicateRow(rowData.id)} className="text-primary">
+                  <DropdownItem value="duplicate" onClick={() => duplicateRow(rowData.id)} className="text-primary">
                     <Plus className="w-4 h-4" />
                     Duplicate
                   </DropdownItem>
                   <hr className="border-glass-border dark:border-glass-border-dark my-1" />
-                  <DropdownItem onClick={() => deleteRow(rowData.id)} className="text-red-500">
+                  <DropdownItem value="delete" onClick={() => deleteRow(rowData.id)} className="text-red-500">
                     <Trash2 className="w-4 h-4" />
                     Delete
                   </DropdownItem>
@@ -412,11 +406,6 @@ export function BatchTable({
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     pageCount: -1,
-    rowSelection: {
-      onChange: (selected) => {
-        // Selection handled externally
-      },
-    },
   });
 
   const handleGenerate = useCallback(async () => {

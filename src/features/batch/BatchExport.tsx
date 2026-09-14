@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import {
   Download,
@@ -11,7 +10,6 @@ import {
   X,
   Loader2,
   ArrowRight,
-  Settings,
   Copy,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
@@ -51,8 +49,8 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
     filename: 'qr-codes',
   });
   const [isExporting, setIsExporting] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentItem, setCurrentItem] = useState(0);
+  const [_progress, setProgress] = useState(0);
+  const [_currentItem, setCurrentItem] = useState(0);
   const [results, setResults] = useState<{ success: number; failed: number; errors: string[] }>({
     success: 0,
     failed: 0,
@@ -70,7 +68,7 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
     setShowResults(false);
 
     try {
-      if (selectedFormat === 'zip') {
+      if ((selectedFormat as string) === 'zip') {
         await exportAsZip();
       } else if (selectedFormat === 'pdf') {
         await exportAsPdf();
@@ -107,7 +105,7 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
           cornersDotOptions: item.settings.cornersDotOptions,
           backgroundOptions: item.settings.backgroundOptions,
           imageOptions: item.settings.imageOptions,
-          image: item.settings.imageOptions?.image,
+          image: item.settings.imageOptions?.image as string,
         });
 
         const blob = await engine.export(selectedFormat, {
@@ -161,7 +159,7 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
           cornersDotOptions: item.settings.cornersDotOptions,
           backgroundOptions: item.settings.backgroundOptions,
           imageOptions: item.settings.imageOptions,
-          image: item.settings.imageOptions?.image,
+          image: item.settings.imageOptions?.image as string,
         });
 
         const canvas = engine.getCanvas();
@@ -241,7 +239,7 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
     >
       {!showResults ? (
         <div className="space-y-6">
-          <Tabs value={selectedFormat} onValueChange={setSelectedFormat} className="w-full">
+          <Tabs value={selectedFormat} onValueChange={(v) => setSelectedFormat(v as ExportFormat)} className="w-full">
             <TabList className="grid grid-cols-3 sm:grid-cols-6 gap-1">
               {EXPORT_FORMATS.map((fmt) => (
                 <TabTrigger
@@ -264,8 +262,8 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
                       Margin: {exportOptions.margin}px
                     </label>
                     <Slider
-                      value={[exportOptions.margin]}
-                      onValueChange={([v]) => setExportOptions((prev) => ({ ...prev, margin: v }))}
+                      value={exportOptions.margin ?? 16}
+                      onChange={(v) => setExportOptions((prev) => ({ ...prev, margin: v }))}
                       min={0}
                       max={100}
                       step={4}
@@ -273,11 +271,11 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      DPI: {exportOptions.dpi}
+                      DPI: {exportOptions.dpi ?? 300}
                     </label>
                     <Slider
-                      value={[exportOptions.dpi]}
-                      onValueChange={([v]) => setExportOptions((prev) => ({ ...prev, dpi: v }))}
+                      value={exportOptions.dpi ?? 300}
+                      onChange={(v) => setExportOptions((prev) => ({ ...prev, dpi: v }))}
                       min={72}
                       max={600}
                       step={72}
@@ -285,11 +283,11 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Quality: {Math.round(exportOptions.quality * 100)}%
+                      Quality: {Math.round((exportOptions.quality ?? 0.92) * 100)}%
                     </label>
                     <Slider
-                      value={[exportOptions.quality]}
-                      onValueChange={([v]) => setExportOptions((prev) => ({ ...prev, quality: v }))}
+                      value={exportOptions.quality ?? 0.92}
+                      onChange={(v) => setExportOptions((prev) => ({ ...prev, quality: v }))}
                       min={0.1}
                       max={1}
                       step={0.05}
@@ -314,11 +312,11 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Margin: {exportOptions.margin}px
+                      Margin: {exportOptions.margin ?? 16}px
                     </label>
                     <Slider
-                      value={[exportOptions.margin]}
-                      onValueChange={([v]) => setExportOptions((prev) => ({ ...prev, margin: v }))}
+                      value={exportOptions.margin ?? 16}
+                      onChange={(v) => setExportOptions((prev) => ({ ...prev, margin: v }))}
                       min={0}
                       max={100}
                       step={4}
@@ -334,21 +332,21 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Margin: {exportOptions.margin}px
+                      Margin: {exportOptions.margin ?? 16}px
                     </label>
                     <Slider
-                      value={[exportOptions.margin]}
-                      onValueChange={([v]) => setExportOptions((prev) => ({ ...prev, margin: v }))}
+                      value={exportOptions.margin ?? 16}
+                      onChange={(v) => setExportOptions((prev) => ({ ...prev, margin: v }))}
                       min={0}
                       max={100}
                       step={4}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">DPI: {exportOptions.dpi}</label>
+                    <label className="block text-sm font-medium text-foreground mb-2">DPI: {exportOptions.dpi ?? 300}</label>
                     <Slider
-                      value={[exportOptions.dpi]}
-                      onValueChange={([v]) => setExportOptions((prev) => ({ ...prev, dpi: v }))}
+                      value={exportOptions.dpi ?? 300}
+                      onChange={(v) => setExportOptions((prev) => ({ ...prev, dpi: v }))}
                       min={72}
                       max={600}
                       step={72}
@@ -359,11 +357,11 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
             </TabContent>
 
             <TabContent value="jpeg" className="space-y-4 pt-4">
-              <TabContent value="png" />
+              <p className="text-sm text-muted-foreground">Using JPEG image compression settings.</p>
             </TabContent>
 
             <TabContent value="webp" className="space-y-4 pt-4">
-              <TabContent value="png" />
+              <p className="text-sm text-muted-foreground">Using WebP image compression settings.</p>
             </TabContent>
 
             <TabContent value="zip" className="space-y-4 pt-4">
@@ -372,7 +370,6 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
                 <p className="text-muted-foreground text-sm mb-4">
                   Creates a ZIP archive containing all QR codes in the selected format.
                 </p>
-                <TabContent value="png" />
               </Card>
             </TabContent>
           </Tabs>
@@ -381,7 +378,7 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-medium text-foreground">Filename Pattern</h4>
-                <p className="text-sm text-muted-foreground">Use {type}, {id}, {date} placeholders</p>
+                <p className="text-sm text-muted-foreground">Use &#123;type&#125;, &#123;id&#125;, &#123;date&#125; placeholders</p>
               </div>
               <Input
                 value={exportOptions.filename}
@@ -395,7 +392,7 @@ export function BatchExport({ items, onClose, isOpen }: BatchExportProps) {
           <div className="flex items-center justify-between p-4 bg-surface/50 rounded-xl">
             <div className="flex items-center gap-3">
               <Badge variant="outline">{formatItemCount} QR codes</Badge>
-              <Badge variant={selectedFormat === 'zip' ? 'primary' : 'outline'}>
+              <Badge variant={(selectedFormat as string) === 'zip' ? 'primary' : 'outline'}>
                 {selectedFormat.toUpperCase()}
               </Badge>
             </div>

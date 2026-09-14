@@ -1,11 +1,9 @@
 import { useState, useMemo, ReactNode } from 'react';
 import { clsx } from 'clsx';
-import { ChevronDown, Search, X, Globe, Wifi, User, Mail, MessageSquare, Phone, Bitcoin, Calendar, MapPin, Smartphone } from 'lucide-react';
+import { ChevronDown, Search, X, Globe, Wifi, User, MessageSquare, Bitcoin, Calendar, MapPin, Smartphone } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
-import { Input } from '@components/ui/Input';
 import { Button } from '@components/ui/Button';
 import { Dropdown, DropdownItem } from '@components/ui/Dropdown';
-import { Tooltip } from '@components/ui/Tooltip';
 
 export interface Template {
   id: string;

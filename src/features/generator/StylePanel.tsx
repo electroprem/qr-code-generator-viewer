@@ -1,12 +1,12 @@
 import { useState, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
-import { ChevronDown, Palette, Square, Circle, GitCompare, Image, Settings, SlidersHorizontal } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
+import { ChevronDown, Palette, Square, Circle, GitCompare, Image, Settings } from 'lucide-react';
+import { Card } from '@components/ui/Card';
 import { Slider } from '@components/ui/Slider';
 import { ColorPicker } from '@components/ui/ColorPicker';
 import { Select } from '@components/ui/Input';
-import { Input } from '@components/ui/Input';
+
 
 interface StyleSectionProps {
   title: string;

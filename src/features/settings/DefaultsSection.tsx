@@ -7,16 +7,16 @@ import {
   Triangle,
   Hexagon,
   Shield,
-  RotateCcw,
   RefreshCw,
+  Upload,
+  Trash2,
+  Check,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Input } from '@components/ui/Input';
 import { Slider } from '@components/ui/Slider';
-import { Badge } from '@components/ui/Badge';
 import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
-import { Tooltip } from '@components/ui/Tooltip';
 import { useQRStore } from '@store/qrStore';
 import { useToast } from '@components/providers/ToastProvider';
 
@@ -64,21 +64,27 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
   const [logoOpacity, setLogoOpacity] = useState(1);
 
   useEffect(() => {
-    if (currentSettings.dotsOptions?.type) setDotStyle(currentSettings.dotsOptions.type);
-    if (currentSettings.cornersSquareOptions?.type) setCornerStyle(currentSettings.cornersSquareOptions.type);
-    if (currentSettings.cornersDotOptions?.type) setCornerDotStyle(currentSettings.cornersDotOptions.type);
-    if (currentSettings.dotsOptions?.color) setForegroundColor(currentSettings.dotsOptions.color);
-    if (currentSettings.backgroundOptions?.color) setBackgroundColor(currentSettings.backgroundOptions.color);
-    if (currentSettings.dotsOptions?.gradient) {
+    const dots = currentSettings.dotsOptions as any;
+    const corners = currentSettings.cornersSquareOptions as any;
+    const cornerDots = currentSettings.cornersDotOptions as any;
+    const bg = currentSettings.backgroundOptions as any;
+    const img = currentSettings.imageOptions as any;
+
+    if (dots?.type) setDotStyle(dots.type);
+    if (corners?.type) setCornerStyle(corners.type);
+    if (cornerDots?.type) setCornerDotStyle(cornerDots.type);
+    if (dots?.color) setForegroundColor(dots.color);
+    if (bg?.color) setBackgroundColor(bg.color);
+    if (dots?.gradient) {
       setGradientEnabled(true);
-      setGradientColors(currentSettings.dotsOptions.gradient.colorStops.map((s) => s.color));
-      setGradientType(currentSettings.dotsOptions.gradient.type);
-      setGradientRotation(currentSettings.dotsOptions.gradient.rotation || 0);
+      setGradientColors(dots.gradient.colorStops?.map((s: any) => s.color) || ['#3b82f6', '#8b5cf6']);
+      setGradientType(dots.gradient.type || 'linear');
+      setGradientRotation(dots.gradient.rotation || 0);
     }
-    if (currentSettings.imageOptions?.image) {
+    if (img?.image) {
       setLogoEnabled(true);
-      setLogoImage(currentSettings.imageOptions.image as string);
-      setLogoSize(currentSettings.imageOptions.imageSize || 0.2);
+      setLogoImage(img.image as string);
+      setLogoSize(img.imageSize || 0.2);
     }
   }, [currentSettings]);
 
@@ -197,7 +203,7 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
               min="1"
               max="40"
               step={1}
-              value={currentSettings.version || 0}
+              value={Number(currentSettings.version) || 0}
               onChange={(e) => updateSettings({ version: Number(e.target.value) || undefined })}
               placeholder="Auto"
               className="w-full"
@@ -218,6 +224,7 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
                 {ERROR_CORRECTION_LEVELS.map((e) => (
                   <DropdownItem
                     key={e.value}
+                    value={e.value}
                     onClick={() => updateSettings({ errorCorrectionLevel: e.value as any })}
                     className={clsx(currentSettings.errorCorrectionLevel === e.value && 'bg-primary/10')}
                   >
@@ -235,7 +242,7 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">Mode</label>
             <select
-              value={currentSettings.mode || 'default'}
+              value={(currentSettings.mode as string) || 'default'}
               onChange={(e) => updateSettings({ mode: e.target.value })}
               className="input-base w-full"
             >
@@ -452,8 +459,8 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
                   Rotation: {gradientRotation}°
                 </label>
                 <Slider
-                  value={[gradientRotation]}
-                  onValueChange={([v]) => setGradientRotation(v)}
+                  value={gradientRotation}
+                  onChange={(v) => setGradientRotation(v)}
                   min={0}
                   max={360}
                   step={15}
@@ -503,8 +510,8 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
                     Logo Size: {Math.round(logoSize * 100)}%
                   </label>
                   <Slider
-                    value={[logoSize]}
-                    onValueChange={([v]) => {
+                    value={logoSize}
+                    onChange={(v) => {
                       setLogoSize(v);
                       updateSettings({
                         imageOptions: { ...currentSettings.imageOptions, imageSize: v },
@@ -520,8 +527,8 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
                     Opacity: {Math.round(logoOpacity * 100)}%
                   </label>
                   <Slider
-                    value={[logoOpacity]}
-                    onValueChange={([v]) => setLogoOpacity(v)}
+                    value={logoOpacity}
+                    onChange={(v) => setLogoOpacity(v)}
                     min={0.1}
                     max={1}
                     step={0.05}
@@ -574,5 +581,3 @@ export function DefaultsSection({ className }: DefaultsSectionProps) {
     </Card>
   );
 }
-
-import { Upload, Trash2, Triangle, Check } from 'lucide-react';

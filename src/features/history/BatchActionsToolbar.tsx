@@ -8,7 +8,7 @@ import {
   Tag,
   Star,
   X,
-  Check,
+  Plus,
   MoreHorizontal,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
@@ -27,7 +27,7 @@ interface BatchActionsToolbarProps {
 
 export function BatchActionsToolbar({ selectedIds, items, onClearSelection }: BatchActionsToolbarProps) {
   const { showToast } = useToast();
-  const { qrHistory, addTag, removeTag, toggleFavorite, deleteQR } = useQRStore();
+  const { addTag, removeTag, toggleFavorite, deleteQR } = useQRStore();
   const selectedItems = items.filter((item) => selectedIds.has(item.id));
   const selectedCount = selectedItems.length;
 
@@ -244,7 +244,7 @@ export function BatchActionsToolbar({ selectedIds, items, onClearSelection }: Ba
                   </Tooltip>
                 </DropdownTrigger>
                 <div className="dropdown-menu dropdown-menu-end w-48">
-                  <DropdownItem onClick={() => {
+                  <DropdownItem value="add-tag" onClick={() => {
                     const tag = prompt('Enter tag name:');
                     if (tag) handleTag(tag.trim().toLowerCase());
                   }}>
@@ -252,7 +252,7 @@ export function BatchActionsToolbar({ selectedIds, items, onClearSelection }: Ba
                     Add new tag
                   </DropdownItem>
                   {allTags.map((tag) => (
-                    <DropdownItem key={tag} onClick={() => handleRemoveTag(tag)} className="text-red-500">
+                    <DropdownItem key={tag} value={tag} onClick={() => handleRemoveTag(tag)} className="text-red-500">
                       <Tag className="w-4 h-4" />
                       Remove #{tag}
                     </DropdownItem>

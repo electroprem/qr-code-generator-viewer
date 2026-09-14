@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, createContext, useContext, ReactNode, useId } from 'react';
+import { useState, useCallback, useEffect, createContext, useContext, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
@@ -105,7 +105,6 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
   const { type, title, message, duration, action, dismissible = true } = toast;
   const { icon, bg, border } = typeStyles[type];
   const [progress, setProgress] = useState(100);
-  const progressRef = useId();
 
   useEffect(() => {
     if (duration && duration > 0) {

@@ -1,22 +1,17 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play,
   Pause,
-  Stop,
+  Square,
   RotateCcw,
   AlertCircle,
-  CheckCircle,
-  XCircle,
-  Loader2,
   ChevronDown,
   ChevronUp,
   Download,
   Trash2,
   Settings,
-  SkipBack,
-  SkipForward,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
@@ -231,7 +226,7 @@ export function BatchGenerate({
             
             {isGenerating && (
               <Button variant="destructive" onClick={cancelGeneration} size="lg">
-                <Stop className="w-5 h-5 mr-2" />
+                <Square className="w-5 h-5 mr-2" />
                 Cancel
               </Button>
             )}
@@ -356,7 +351,7 @@ export function BatchGenerate({
           <div className="space-y-4 max-h-[70vh] overflow-auto">
             {rows
               .filter((r) => r.status === 'done' && r.qrDataUrl)
-              .map((row, index) => (
+              .map((row) => (
                 <Card key={row.id} variant="glass" padding="md" className="flex flex-col sm:flex-row gap-4 items-start">
                   <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-surface">
                     <img src={row.qrDataUrl!} alt="" className="w-full h-full object-cover" />

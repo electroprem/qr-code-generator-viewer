@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import {
@@ -6,22 +6,16 @@ import {
   Edit2,
   Check,
   X,
-  Copy,
   RotateCcw,
-  Plus,
-  Minus,
-  ArrowUp,
-  ArrowDown,
+  Download,
+  Upload,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
-import { Input } from '@components/ui/Input';
+import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Badge } from '@components/ui/Badge';
-import { Modal } from '@components/ui/Modal';
-import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
 import { Tooltip } from '@components/ui/Tooltip';
 import { useToast } from '@components/providers/ToastProvider';
-import { useKeyboard } from '@hooks/useKeyboard';
+import { useKeyboard } from '@components/providers/KeyboardProvider';
 
 interface Shortcut {
   id: string;
@@ -55,7 +49,7 @@ const DEFAULT_SHORTCUTS: Shortcut[] = [
 
 export function ShortcutsSection({ className }: { className?: string }) {
   const { showToast } = useToast();
-  const { registerShortcut, unregisterShortcut } = useKeyboard();
+  const { registerShortcut } = useKeyboard();
   const [shortcuts, setShortcuts] = useState<Shortcut[]>(() => {
     const saved = localStorage.getItem('keyboard-shortcuts');
     if (saved) {
@@ -71,15 +65,6 @@ export function ShortcutsSection({ className }: { className?: string }) {
   const [editKeys, setEditKeys] = useState({ key: '', ctrl: false, shift: false, alt: false, meta: false });
   const [listening, setListening] = useState(false);
 
-  const formatShortcut = (s: Shortcut): string => {
-    const parts = [];
-    if (s.ctrl) parts.push(navigator.platform.includes('Mac') ? '⌘' : 'Ctrl');
-    if (s.shift) parts.push('Shift');
-    if (s.alt) parts.push(navigator.platform.includes('Mac') ? 'Option' : 'Alt');
-    if (s.meta) parts.push('Meta');
-    parts.push(s.key);
-    return parts.join(' + ');
-  };
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!listening || !editingId) return;
@@ -128,19 +113,34 @@ export function ShortcutsSection({ className }: { className?: string }) {
 
   useEffect(() => {
     localStorage.setItem('keyboard-shortcuts', JSON.stringify(shortcuts));
-    shortcuts.forEach((s) => {
-      if (s.editable) {
-        registerShortcut(s.id, s.key, () => {
-          // Action would be handled by the app
-        }, { ctrl: s.ctrl, shift: s.shift, alt: s.alt, meta: s.meta });
-      }
-    });
+    const unregisters = shortcuts
+      .filter((s) => s.editable)
+      .map((s) =>
+        registerShortcut({
+          key: s.key,
+          ctrl: s.ctrl,
+          shift: s.shift,
+          alt: s.alt,
+          meta: s.meta,
+          action: () => {},
+          description: s.description,
+        })
+      );
+    return () => {
+      unregisters.forEach((unreg) => unreg());
+    };
   }, [shortcuts, registerShortcut]);
 
   const startEditing = (id: string) => {
     const shortcut = shortcuts.find((s) => s.id === id);
     if (shortcut) {
-      setEditKeys({ key: shortcut.key, ctrl: shortcut.ctrl, shift: shortcut.shift, alt: shortcut.alt, meta: shortcut.meta });
+      setEditKeys({
+        key: shortcut.key,
+        ctrl: !!shortcut.ctrl,
+        shift: !!shortcut.shift,
+        alt: !!shortcut.alt,
+        meta: !!shortcut.meta,
+      });
       setEditingId(id);
       setListening(true);
     }
@@ -345,5 +345,3 @@ export function ShortcutsSection({ className }: { className?: string }) {
     </Card>
   );
 }
-
-import { Upload } from 'lucide-react';

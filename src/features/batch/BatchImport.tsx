@@ -8,15 +8,13 @@ import {
   Check,
   AlertCircle,
   ChevronDown,
-  ChevronUp,
   ArrowRight,
   Trash2,
-  Download,
   Settings,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
-import { Input } from '@components/ui/Input';
 import { Badge } from '@components/ui/Badge';
 import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
 import { Tooltip } from '@components/ui/Tooltip';
@@ -33,11 +31,6 @@ interface ParsedRow {
   errors: string[];
 }
 
-interface FieldMapping {
-  sourceField: string;
-  targetField: string;
-  required: boolean;
-}
 
 interface BatchImportProps {
   onImport: (rows: ParsedRow[]) => void;
@@ -282,7 +275,7 @@ export function BatchImport({ onImport, className }: BatchImportProps) {
   return (
     <Card variant="glass" padding="none" className={clsx('overflow-hidden', className)}>
       <div className="p-4 border-b border-glass-border dark:border-glass-border-dark">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'file' | 'manual')}>
           <TabList className="w-full sm:w-auto">
             <TabTrigger value="file" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
@@ -351,16 +344,17 @@ export function BatchImport({ onImport, className }: BatchImportProps) {
                             </Button>
                           </DropdownTrigger>
                           <div className="dropdown-menu dropdown-menu-end w-56 max-h-64 overflow-auto">
-                            <DropdownItem onClick={() => handleMappingChange(sourceKey, '')}>
+                            <DropdownItem value="ignore" onClick={() => handleMappingChange(sourceKey, '')}>
                               Ignore
                             </DropdownItem>
-                            <DropdownItem onClick={() => handleMappingChange(sourceKey, 'type')}>
+                            <DropdownItem value="type" onClick={() => handleMappingChange(sourceKey, 'type')}>
                               Type
                             </DropdownItem>
                             <hr className="border-glass-border dark:border-glass-border-dark my-1" />
                             {(TYPE_FIELDS[selectedType] || []).map((f) => (
                               <DropdownItem
                                 key={f.field}
+                                value={f.field}
                                 onClick={() => handleMappingChange(sourceKey, f.field)}
                                 className={clsx(columnMapping[sourceKey] === f.field && 'bg-primary/10')}
                               >
@@ -563,5 +557,3 @@ export function BatchImport({ onImport, className }: BatchImportProps) {
     </Card>
   );
 }
-
-import { TabContent } from '@components/ui/Tabs';

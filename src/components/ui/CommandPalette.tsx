@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useMemo, useCallback, KeyboardEvent, ReactNode } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
-import { Search, X, Command } from 'lucide-react';
+import { Search, Command } from 'lucide-react';
 
 export interface CommandItem {
   id: string;
@@ -32,17 +32,6 @@ export interface CommandPaletteProps {
   className?: string;
 }
 
-function fuzzyMatch(query: string, text: string): boolean {
-  if (!query) return true;
-  const q = query.toLowerCase();
-  const t = text.toLowerCase();
-  let i = 0;
-  for (const char of t) {
-    if (char === q[i]) i++;
-    if (i === q.length) return true;
-  }
-  return false;
-}
 
 function scoreMatch(query: string, text: string, keywords?: string[]): number {
   if (!query) return 0;
@@ -119,15 +108,15 @@ export function CommandPalette({
   }, [isOpen]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
       if (!isOpen) return;
       if (e.key === 'Escape') onClose();
     };
-    document.addEventListener('keydown', handleKeyDown as EventListener);
-    return () => document.removeEventListener('keydown', handleKeyDown as EventListener);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -298,14 +287,14 @@ export function useCommandPalette() {
   const registerItems = useCallback((newItems: CommandItem[]) => setItems(newItems), []);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         toggle();
       }
     };
-    document.addEventListener('keydown', handleKeyDown as EventListener);
-    return () => document.removeEventListener('keydown', handleKeyDown as EventListener);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggle]);
 
   return { isOpen, open, close, toggle, items, registerItems };

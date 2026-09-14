@@ -13,15 +13,18 @@ import {
   Monitor,
   Shield,
   Heart,
-  Coffee,
   Mail,
   Twitter,
-  Discord,
+  MessageCircle,
+  Copy,
+  QrCode,
+  Database,
+  Palette,
+  MessageSquare,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Badge } from '@components/ui/Badge';
-import { Modal } from '@components/ui/Modal';
 import { useToast } from '@components/providers/ToastProvider';
 import { useTheme } from '@components/providers/ThemeProvider';
 
@@ -85,7 +88,7 @@ User Agent: ${navigator.userAgent}
 Screen: ${screen.width}x${screen.height}
 Theme: ${resolvedTheme}
 PWA: ${pwaInstallable ? 'Installable' : 'Installed/Not Supported'}
-Storage: ${navigator.storage?.estimate ? 'Available' : 'Limited'}
+Storage: ${typeof navigator.storage?.estimate === 'function' ? 'Available' : 'Limited'}
 `;
     await navigator.clipboard.writeText(info);
     showToast({ type: 'success', title: 'System info copied' });
@@ -260,7 +263,7 @@ Storage: ${navigator.storage?.estimate ? 'Available' : 'Limited'}
               Twitter
             </Button>
             <Button variant="outline" onClick={() => openLink('https://discord.com')}>
-              <Discord className="w-4 h-4 mr-1" />
+              <MessageCircle className="w-4 h-4 mr-1" />
               Discord
             </Button>
             <Button variant="outline" onClick={() => openLink('mailto:')}>
@@ -314,5 +317,3 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
-
-import { Database, QrCode, Palette, MessageSquare } from 'lucide-react';

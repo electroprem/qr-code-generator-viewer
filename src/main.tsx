@@ -9,6 +9,7 @@ import { registerSW } from '@lib/pwa';
 import '@styles/globals.css';
 
 console.log('🚀 QR Studio 2.0 starting...');
+registerSW();
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 

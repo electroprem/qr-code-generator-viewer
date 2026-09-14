@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Plus,
   Trash2,
@@ -9,20 +9,15 @@ import {
   Download,
   Upload,
   Palette,
-  Eye,
-  EyeOff,
   Check,
-  X,
   ChevronDown,
-  ChevronUp,
+  RotateCcw,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Input } from '@components/ui/Input';
-import { Badge } from '@components/ui/Badge';
 import { Modal } from '@components/ui/Modal';
 import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
-import { Tooltip } from '@components/ui/Tooltip';
 import { ColorPicker } from '@components/ui/ColorPicker';
 import { useToast } from '@components/providers/ToastProvider';
 import { useQRStore } from '@store/qrStore';
@@ -130,31 +125,29 @@ export function PresetsSection({ className }: { className?: string }) {
         ...currentSettings.dotsOptions,
         color: preset.foreground,
         gradient: preset.gradient,
+        type: (preset.dotStyle as any) || currentSettings.dotsOptions?.type,
       },
       backgroundOptions: {
         ...currentSettings.backgroundOptions,
         color: preset.background,
       },
-      dotsOptions: {
-        ...currentSettings.dotsOptions,
-        type: preset.dotStyle || currentSettings.dotsOptions?.type,
-      },
       cornersSquareOptions: {
         ...currentSettings.cornersSquareOptions,
-        type: preset.cornerStyle || currentSettings.cornersSquareOptions?.type,
+        type: (preset.cornerStyle as any) || currentSettings.cornersSquareOptions?.type,
       },
     });
     showToast({ type: 'success', title: 'Preset applied', message: preset.name });
   }, [showToast]);
 
   const handleAddPreset = useCallback(() => {
-    if (!newPreset.name.trim()) {
+    const name = newPreset.name?.trim();
+    if (!name) {
       showToast({ type: 'error', title: 'Name required' });
       return;
     }
     const preset: ColorPreset = {
       id: `custom-${Date.now()}`,
-      name: newPreset.name.trim(),
+      name,
       foreground: newPreset.foreground || '#000000',
       background: newPreset.background || '#ffffff',
       gradient: newPreset.gradient,
@@ -168,8 +161,9 @@ export function PresetsSection({ className }: { className?: string }) {
   }, [newPreset, presets, showToast]);
 
   const handleUpdatePreset = useCallback(() => {
-    if (!editingPreset || !newPreset.name.trim()) return;
-    setPresets(presets.map((p) => (p.id === editingPreset.id ? { ...p, ...newPreset } as ColorPreset : p)));
+    const name = newPreset.name?.trim();
+    if (!editingPreset || !name) return;
+    setPresets(presets.map((p) => (p.id === editingPreset.id ? { ...p, ...newPreset, name } as ColorPreset : p)));
     setEditingPreset(null);
     setNewPreset({ name: '', foreground: '#000000', background: '#ffffff' });
     setShowModal(false);
@@ -295,22 +289,22 @@ export function PresetsSection({ className }: { className?: string }) {
                         </Button>
                       </DropdownTrigger>
                       <div className="dropdown-menu dropdown-menu-end">
-                        <DropdownItem onClick={() => applyPreset(preset)}>
+                        <DropdownItem value="apply" onClick={() => applyPreset(preset)}>
                           <Check className="w-4 h-4" />
                           Apply
                         </DropdownItem>
-                        <DropdownItem onClick={() => handleEditPreset(preset)}>
+                        <DropdownItem value="edit" onClick={() => handleEditPreset(preset)}>
                           <Edit2 className="w-4 h-4" />
                           Edit
                         </DropdownItem>
-                        <DropdownItem onClick={() => handleDuplicatePreset(preset)}>
+                        <DropdownItem value="duplicate" onClick={() => handleDuplicatePreset(preset)}>
                           <Copy className="w-4 h-4" />
                           Duplicate
                         </DropdownItem>
                         {!preset.isDefault && (
                           <>
                             <hr className="border-glass-border dark:border-glass-border-dark my-1" />
-                            <DropdownItem onClick={() => handleDeletePreset(preset.id)} className="text-red-500">
+                            <DropdownItem value="delete" onClick={() => handleDeletePreset(preset.id)} className="text-red-500">
                               <Trash2 className="w-4 h-4" />
                               Delete
                             </DropdownItem>

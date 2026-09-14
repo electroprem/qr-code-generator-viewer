@@ -1,7 +1,4 @@
-import { useCallback, useMemo } from 'react';
-import { FixedSizeGrid as Grid } from 'react-window';
-import { AutoSizer } from 'react-virtualized-auto-sizer';
-import { clsx } from 'clsx';
+import { useMemo } from 'react';
 import { HistoryCard } from './HistoryCard';
 import type { QRRecord } from '@lib/storage/indexedDB';
 import { useQRStore } from '@store/qrStore';
@@ -32,43 +29,6 @@ export function HistoryGrid({
     return 4;
   }, [viewMode]);
 
-  const columnWidth = useMemo(() => {
-    if (viewMode === 'list') return '100%';
-    return `${100 / columnCount}%`;
-  }, [viewMode, columnCount]);
-
-  const rowHeight = viewMode === 'list' ? 120 : 280;
-
-  const CellRenderer = useCallback(
-    ({ index, style }: { index: number; style: React.CSSProperties }) => {
-      const item = items[index];
-      const isSelected = selectedIds.has(item.id);
-
-      return (
-        <div
-          key={item.id}
-          style={style}
-          className="p-2 sm:p-3"
-          role="gridcell"
-          aria-selected={isSelected}
-        >
-          <HistoryCard
-            qr={item}
-            isSelected={isSelected}
-            onSelect={(selected) => {
-              const newSelected = new Set(selectedIds);
-              if (selected) newSelected.add(item.id);
-              else newSelected.delete(item.id);
-              onSelectionChange(newSelected);
-            }}
-            onAction={(action) => onItemAction(item.id, action)}
-          />
-        </div>
-      );
-    },
-    [items, selectedIds, onSelectionChange, onItemAction]
-  );
-
   if (items.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[300px] p-8 text-center">
@@ -86,31 +46,37 @@ export function HistoryGrid({
   }
 
   return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <div
-          className="grid gap-0"
-          style={{
-            gridTemplateColumns: viewMode === 'list' ? '1fr' : `repeat(${columnCount}, 1fr)`,
-            height,
-            width,
-          }}
-          role="grid"
-          aria-label="QR code history"
-        >
-          <Grid
-            columnCount={columnCount}
-            columnWidth={viewMode === 'list' ? width : Math.floor(width / columnCount)}
-            rowCount={items.length}
-            rowHeight={rowHeight}
-            width={width}
-            height={height}
-            overscanCount={2}
+    <div
+      className="grid gap-3 p-2"
+      style={{
+        gridTemplateColumns: viewMode === 'list' ? '1fr' : `repeat(${columnCount}, 1fr)`,
+      }}
+      role="grid"
+      aria-label="QR code history"
+    >
+      {items.map((item) => {
+        const isSelected = selectedIds.has(item.id);
+        return (
+          <div
+            key={item.id}
+            className="p-1"
+            role="gridcell"
+            aria-selected={isSelected}
           >
-            {CellRenderer}
-          </Grid>
-        </div>
-      )}
-    </AutoSizer>
+            <HistoryCard
+              qr={item}
+              isSelected={isSelected}
+              onSelect={(selected) => {
+                const newSelected = new Set(selectedIds);
+                if (selected) newSelected.add(item.id);
+                else newSelected.delete(item.id);
+                onSelectionChange(newSelected);
+              }}
+              onAction={(action) => onItemAction(item.id, action)}
+            />
+          </div>
+        );
+      })}
+    </div>
   );
 }

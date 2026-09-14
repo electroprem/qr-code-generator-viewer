@@ -1,36 +1,28 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { clsx } from 'clsx';
 import {
   Monitor,
   Sun,
   Moon,
   Palette,
-  SlidersHorizontal,
-  Eye,
-  EyeOff,
-  Minimize2,
-  Maximize2,
   Contrast,
   Zap,
+  Minimize2,
+  SlidersHorizontal,
 } from 'lucide-react';
-import { Button } from '@components/ui/Button';
-import { Card } from '@components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
 import { Slider } from '@components/ui/Slider';
 import { Input } from '@components/ui/Input';
 import { Badge } from '@components/ui/Badge';
 import { ColorPicker } from '@components/ui/ColorPicker';
-import { useTheme } from '@components/providers/ThemeProvider';
-import { useToast } from '@components/providers/ToastProvider';
-import { useQRStore } from '@store/qrStore';
+import { useTheme, Theme } from '@components/providers/ThemeProvider';
 
 interface AppearanceSectionProps {
   className?: string;
 }
 
 export function AppearanceSection({ className }: AppearanceSectionProps) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
-  const { showToast } = useToast();
-  const { currentSettings, setSettings } = useQRStore();
+  const { theme, setTheme } = useTheme();
   const [glassmorphism, setGlassmorphism] = useState(0.8);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [density, setDensity] = useState<'comfortable' | 'compact' | 'spacious'>('comfortable');
@@ -104,7 +96,7 @@ export function AppearanceSection({ className }: AppearanceSectionProps) {
               return (
                 <button
                   key={option.value}
-                  onClick={() => setTheme(option.value)}
+                  onClick={() => setTheme(option.value as Theme)}
                   className={clsx(
                     'relative p-4 rounded-xl border-2 transition-all duration-200 text-left',
                     isActive
@@ -170,8 +162,8 @@ export function AppearanceSection({ className }: AppearanceSectionProps) {
             <Badge variant="outline">{Math.round(glassmorphism * 100)}%</Badge>
           </label>
           <Slider
-            value={[glassmorphism]}
-            onValueChange={([v]) => setGlassmorphism(v)}
+            value={glassmorphism}
+            onChange={(v) => setGlassmorphism(v)}
             min={0}
             max={1}
             step={0.05}

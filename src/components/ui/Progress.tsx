@@ -48,7 +48,7 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
           aria-valuenow={Math.round(percentage)}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={label}
+          aria-label={label != null ? String(label) : undefined}
         >
           <motion.div
             className={clsx(

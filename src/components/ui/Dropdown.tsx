@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useId, ReactNode, KeyboardEvent, Fragment, forwardRef, createContext, useContext, isValidElement } from 'react';
+import React, { useState, useRef, useEffect, useId, ReactNode, KeyboardEvent, Fragment, forwardRef, createContext, useContext, isValidElement } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
-import { ChevronDown, X, ChevronsUpDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export type DropdownPlacement = 'bottom' | 'top' | 'left' | 'right';
 export type DropdownAlign = 'start' | 'center' | 'end';
@@ -78,7 +78,7 @@ export const DropdownMenu = forwardRef<HTMLDivElement, {
   align?: DropdownAlign;
   width?: number | 'trigger';
 }>(
-  ({ children, className, placement = 'bottom', align: _align = 'start', width = 'trigger', ...props }, ref) => {
+  ({ children, className, placement = 'bottom', align: _align = 'start', width = 'trigger', ...props }, _ref) => {
     const { close } = useDropdownContext();
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -94,7 +94,7 @@ export const DropdownMenu = forwardRef<HTMLDivElement, {
     return (
       <AnimatePresence>
         <motion.div
-          ref={(el) => { menuRef.current = el; if (ref) ref.current = el; }}
+          ref={menuRef}
           initial={{ opacity: 0, scale: 0.95, y: placement === 'top' ? 8 : -8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: placement === 'top' ? 8 : -8 }}

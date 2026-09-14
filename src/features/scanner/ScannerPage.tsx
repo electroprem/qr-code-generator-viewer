@@ -74,7 +74,7 @@ export function ScannerPage() {
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(video, 0, 0);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const _imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     }, 100);
   };
 
@@ -82,7 +82,7 @@ export function ScannerPage() {
     if (!videoRef.current?.srcObject) return;
     try {
       const track = (videoRef.current.srcObject as MediaStream).getVideoTracks()[0];
-      await track.applyConstraints({ advanced: [{ torch: !torchEnabled }] });
+      await track.applyConstraints({ advanced: [{ torch: !torchEnabled }] as any });
       setTorchEnabled(!torchEnabled);
     } catch {
       showToast({ type: 'warning', title: 'Torch not available' });
@@ -98,7 +98,7 @@ export function ScannerPage() {
     }
   };
 
-  const handleResult = (text: string) => {
+  const _handleResult = (text: string) => {
     setResult(text);
     stopScanning();
     showToast({ type: 'success', title: 'QR Code detected!', message: text.slice(0, 50) });
