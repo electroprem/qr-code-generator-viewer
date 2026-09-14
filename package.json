@@ -1,0 +1,49 @@
+{
+  "name": "qr-studio-2",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.10.7",
+    "@types/react-window": "^1.8.8",
+    "clsx": "^2.0.0",
+    "framer-motion": "^10.16.16",
+    "html5-qrcode": "^2.3.8",
+    "idb": "^8.0.0",
+    "jspdf": "^4.2.1",
+    "jszip": "^3.10.1",
+    "lucide-react": "^0.294.0",
+    "papaparse": "^5.4.1",
+    "qr-code-styling": "^1.6.0-rc.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.18.3",
+    "react-virtualized-auto-sizer": "^2.0.3",
+    "react-window": "^1.8.10",
+    "tailwind-merge": "^2.0.0",
+    "uuid": "^9.0.0",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/jspdf": "^2.0.0",
+    "@types/jszip": "^3.4.1",
+    "@types/node": "^20.10.5",
+    "@types/papaparse": "^5.3.14",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "3.4.17",
+    "typescript": "^5.3.3",
+    "vite": "^5.4.0",
+    "vite-plugin-pwa": "^0.20.0",
+    "workbox-window": "^7.0.0"
+  }
+}

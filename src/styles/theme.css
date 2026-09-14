@@ -1,0 +1,83 @@
+:root {
+  --color-glass-light: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.08);
+  --color-glass-dark: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.15);
+  --color-glass-border-dark: rgba(255, 255, 255, 0.1);
+  --color-surface-light: rgba(255, 255, 255, 0.8);
+  --color-surface: rgba(255, 255, 255, 0.6);
+  --color-surface-dark: rgba(255, 255, 255, 0.4);
+
+  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --shadow-glass-lg: 0 8px 40px rgba(0, 0, 0, 0.15);
+  --shadow-glass-xl: 0 16px 60px rgba(0, 0, 0, 0.2);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  --radius-4xl: 2rem;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --transition-fast: 150ms ease-out;
+  --transition-base: 200ms ease-out;
+  --transition-slow: 300ms ease-out;
+
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+  --z-toast: 800;
+}
+
+.dark {
+  --color-glass-light: rgba(255, 255, 255, 0.08);
+  --color-glass: rgba(255, 255, 255, 0.06);
+  --color-glass-dark: rgba(255, 255, 255, 0.04);
+  --color-glass-border: rgba(255, 255, 255, 0.12);
+  --color-glass-border-dark: rgba(255, 255, 255, 0.08);
+  --color-surface-light: rgba(255, 255, 255, 0.12);
+  --color-surface: rgba(255, 255, 255, 0.08);
+  --color-surface-dark: rgba(255, 255, 255, 0.05);
+
+  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.3);
+  --shadow-glass-lg: 0 8px 40px rgba(0, 0, 0, 0.4);
+  --shadow-glass-xl: 0 16px 60px rgba(0, 0, 0, 0.5);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-glass-light: rgba(255, 255, 255, 0.08);
+    --color-glass: rgba(255, 255, 255, 0.06);
+    --color-glass-dark: rgba(255, 255, 255, 0.04);
+    --color-glass-border: rgba(255, 255, 255, 0.12);
+    --color-glass-border-dark: rgba(255, 255, 255, 0.08);
+    --color-surface-light: rgba(255, 255, 255, 0.12);
+    --color-surface: rgba(255, 255, 255, 0.08);
+    --color-surface-dark: rgba(255, 255, 255, 0.05);
+
+    --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.3);
+    --shadow-glass-lg: 0 8px 40px rgba(0, 0, 0, 0.4);
+    --shadow-glass-xl: 0 16px 60px rgba(0, 0, 0, 0.5);
+    --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+.light {
+  --color-glass-light: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.08);
+  --color-glass-dark: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.15);
+  --color-glass-border-dark: rgba(255, 255, 255, 0.1);
+  --color-surface-light: rgba(255, 255, 255, 0.8);
+  --color-surface: rgba(255, 255, 255, 0.6);
+  --color-surface-dark: rgba(255, 255, 255, 0.4);
+
+  --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.1);
+  --shadow-glass-lg: 0 8px 40px rgba(0, 0, 0, 0.15);
+  --shadow-glass-xl: 0 16px 60px rgba(0, 0, 0, 0.2);
+  --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
