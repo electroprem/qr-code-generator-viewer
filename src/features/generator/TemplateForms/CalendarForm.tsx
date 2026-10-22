@@ -61,8 +61,6 @@ export function CalendarForm({ initialData, onSubmit, onCancel, className }: Cal
     if (errors[field as keyof CalendarFormData]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-  const formatDate = (date: Date) => date.toISOString().split('T')[0];
-
   return (
     <Card variant="glass" padding="md" className={clsx('space-y-4', className)}>
       <CardHeader>

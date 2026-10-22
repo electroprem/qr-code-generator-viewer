@@ -74,7 +74,6 @@ export function ScannerPage() {
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(video, 0, 0);
-      const _imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     }, 100);
   };
 
@@ -96,12 +95,6 @@ export function ScannerPage() {
       stopScanning();
       setTimeout(startScanning, 100);
     }
-  };
-
-  const _handleResult = (text: string) => {
-    setResult(text);
-    stopScanning();
-    showToast({ type: 'success', title: 'QR Code detected!', message: text.slice(0, 50) });
   };
 
   const openLink = () => {

@@ -11,6 +11,7 @@ import {
   SortingState,
 } from '@tanstack/react-table';
 import { clsx } from 'clsx';
+import { motion } from 'framer-motion';
 import {
   Plus,
   Trash2,
@@ -22,6 +23,7 @@ import {
   Loader2,
   ChevronDown,
   ChevronUp,
+  QrCode,
 } from 'lucide-react';
 import { Button } from '@components/ui/Button';
 import { Input } from '@components/ui/Input';
@@ -30,7 +32,6 @@ import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown
 import { Tooltip } from '@components/ui/Tooltip';
 import { Card } from '@components/ui/Card';
 import { Modal } from '@components/ui/Modal';
-import { QRCodeEngine, QROptions } from '@lib/qr/qrEngine';
 import { useToast } from '@components/providers/ToastProvider';
 
 const columnHelper = createColumnHelper<BatchRow>();
@@ -69,11 +70,6 @@ const QR_TYPES = [
   { value: 'calendar', label: 'Calendar', fields: ['title', 'description', 'location', 'start', 'end'] },
   { value: 'applink', label: 'App Link', fields: ['url', 'package', 'fallback'] },
 ] as const;
-
-function getFieldsForType(type: string): string[] {
-  const t = QR_TYPES.find((qt) => qt.value === type);
-  return t ? [...t.fields] : ['data'];
-}
 
 function buildDataString(type: string, data: Record<string, string>): string {
   
@@ -426,17 +422,12 @@ export function BatchTable({
     await onExport(doneRows, format);
   }, [rows, onExport, showToast]);
 
-  const selectedCount = rows.filter((r) => r.getIsSelected?.()).length;
-
   return (
     <div className="space-y-4">
       <Card variant="glass" padding="none" className="overflow-hidden">
         <div className="p-4 border-b border-glass-border dark:border-glass-border-dark flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
             <h3 className="font-semibold text-foreground">Batch Items ({rows.length})</h3>
-            {selectedCount > 0 && (
-              <Badge variant="outline">{selectedCount} selected</Badge>
-            )}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={addRow} disabled={isGenerating}>
@@ -606,5 +597,3 @@ export function BatchTable({
     </div>
   );
 }
-
-import { QrCode } from 'lucide-react';

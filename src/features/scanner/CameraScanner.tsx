@@ -35,7 +35,7 @@ interface CameraScannerProps {
 export function CameraScanner({ onScanResult, className }: CameraScannerProps) {
   const { showToast } = useToast();
   const [isScanning, setIsScanning] = useState(false);
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
+  const facingMode: 'user' | 'environment' = 'environment';
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [permission, setPermission] = useState<'granted' | 'denied' | 'prompt'>('prompt');
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
@@ -172,15 +172,6 @@ export function CameraScanner({ onScanResult, className }: CameraScannerProps) {
       showToast({ type: 'warning', title: 'Torch control not available in this mode' });
     } catch {
       showToast({ type: 'warning', title: 'Torch not available' });
-    }
-  };
-
-  const _toggleCamera = () => {
-    const newMode = facingMode === 'user' ? 'environment' : 'user';
-    setFacingMode(newMode);
-    if (isScanning) {
-      stopScanning();
-      setTimeout(startScanning, 100);
     }
   };
 

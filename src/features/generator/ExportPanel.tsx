@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 import { clsx } from 'clsx';
-import { Download, Copy, Check, FileImage, FileCode, FileText, Share2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@components/ui/Card';
+import { Download, Copy, Check, FileImage, FileCode, FileText } from 'lucide-react';
+import { Card, CardTitle, CardContent } from '@components/ui/Card';
 import { Button } from '@components/ui/Button';
-import { Tabs } from '@components/ui/Tabs';
+import { Tabs, TabList, TabTrigger } from '@components/ui/Tabs';
 import { Slider } from '@components/ui/Slider';
 
 import { Tooltip } from '@components/ui/Tooltip';
@@ -105,17 +105,16 @@ export function ExportPanel({ dataUrl, size, onExport, onCopy, className }: Expo
           </div>
         </div>
 
-        <Tabs
-          tabs={formatTabs.map((f) => ({
-            value: f.value,
-            label: f.label,
-            icon: f.icon,
-          }))}
-          value={activeFormat}
-          onChange={(v) => setActiveFormat(v as ExportFormat)}
-          variant="enclosed"
-          className="mb-4"
-        />
+        <Tabs value={activeFormat} onValueChange={(v) => setActiveFormat(v as ExportFormat)} variant="enclosed" className="mb-4">
+          <TabList className="grid grid-cols-3 gap-1 sm:grid-cols-5">
+            {formatTabs.map((f) => (
+              <TabTrigger key={f.value} value={f.value} className="flex items-center gap-1">
+                {f.icon}
+                <span>{f.label}</span>
+              </TabTrigger>
+            ))}
+          </TabList>
+        </Tabs>
       </div>
 
       <CardContent className="p-4 space-y-4">
