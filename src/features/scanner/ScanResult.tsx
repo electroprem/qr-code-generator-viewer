@@ -23,7 +23,6 @@ import {
 import { Button } from '@components/ui/Button';
 import { Card } from '@components/ui/Card';
 import { Input } from '@components/ui/Input';
-import { Dropdown, DropdownItem, DropdownTrigger } from '@components/ui/Dropdown';
 import { Tooltip } from '@components/ui/Tooltip';
 import { Tabs, TabList, TabTrigger, TabContent } from '@components/ui/CompoundTabs';
 import { useToast } from '@components/providers/ToastProvider';
