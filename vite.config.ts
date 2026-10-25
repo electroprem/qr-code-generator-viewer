@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/qr-code-generator-viewer/' : '/',
   plugins: [
     react(),
     VitePWA({
@@ -18,52 +19,52 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',
-        start_url: '/',
+        start_url: './',
         icons: [
           {
-            src: '/icons/icon-72x72.svg',
+            src: 'icons/icon-72x72.svg',
             sizes: '72x72',
             type: 'image/svg+xml',
             purpose: 'maskable any'
           },
           {
-            src: '/icons/icon-96x96.svg',
+            src: 'icons/icon-96x96.svg',
             sizes: '96x96',
             type: 'image/svg+xml',
             purpose: 'maskable any'
           },
           {
-            src: '/icons/icon-128x128.svg',
+            src: 'icons/icon-128x128.svg',
             sizes: '128x128',
             type: 'image/svg+xml',
             purpose: 'maskable any'
           },
           {
-            src: '/icons/icon-144x144.svg',
+            src: 'icons/icon-144x144.svg',
             sizes: '144x144',
             type: 'image/svg+xml',
             purpose: 'maskable any'
           },
           {
-            src: '/icons/icon-152x152.svg',
+            src: 'icons/icon-152x152.svg',
             sizes: '152x152',
             type: 'image/svg+xml',
             purpose: 'maskable any'
           },
           {
-            src: '/icons/icon-192x192.svg',
+            src: 'icons/icon-192x192.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
             purpose: 'maskable any'
           },
           {
-            src: '/icons/icon-384x384.svg',
+            src: 'icons/icon-384x384.svg',
             sizes: '384x384',
             type: 'image/svg+xml',
             purpose: 'maskable any'
           },
           {
-            src: '/icons/icon-512x512.svg',
+            src: 'icons/icon-512x512.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'maskable any'
@@ -74,15 +75,15 @@ export default defineConfig({
             name: 'Generate QR',
             short_name: 'Generate',
             description: 'Create a new QR code',
-            url: '/',
-            icons: [{ src: '/icons/generate-icon.svg', sizes: '96x96', type: 'image/svg+xml' }]
+            url: './',
+            icons: [{ src: 'icons/generate-icon.svg', sizes: '96x96', type: 'image/svg+xml' }]
           },
           {
             name: 'Scan QR',
             short_name: 'Scan',
             description: 'Scan a QR code',
-            url: '/scanner',
-            icons: [{ src: '/icons/scan-icon.svg', sizes: '96x96', type: 'image/svg+xml' }]
+            url: './scanner',
+            icons: [{ src: 'icons/scan-icon.svg', sizes: '96x96', type: 'image/svg+xml' }]
           }
         ]
       },
@@ -139,4 +140,4 @@ export default defineConfig({
     port: 3000,
     open: true
   }
-});
+}));

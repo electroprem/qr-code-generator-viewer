@@ -12,10 +12,11 @@ console.log('🚀 QR Studio 2.0 starting...');
 registerSW();
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
+const basename = import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '');
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <ThemeProvider>
         <KeyboardProvider>
           <ToastProvider>
