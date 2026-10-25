@@ -1,8 +1,9 @@
 export async function registerSW() {
   if ('serviceWorker' in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js', {
-        scope: '/'
+      const baseUrl = import.meta.env.BASE_URL;
+      const registration = await navigator.serviceWorker.register(`${baseUrl}sw.js`, {
+        scope: baseUrl
       });
 
       registration.addEventListener('updatefound', () => {
